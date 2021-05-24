@@ -1,7 +1,7 @@
-# Project 14: Experience Continuous Integration with Jenkins | Ansible | Artifactory | SonarQube | PHP
+# Experience Continuous Integration with Jenkins | Ansible | Artifactory | SonarQube | PHP
 
 ## Step 1: Simulating a typical CI/CD Pipeline for a PHP Based application
-
+    This is a continuation of Project 11 through Project 13.
     Note: Create servers required for an environment you are working with at the moment only. For example, when doing deployments for development, do not create servers for integration, pentest, or production yet).
 
 ### Step 1.1: Set Up
@@ -53,6 +53,7 @@
     <Pentest-for-Tooling-Private-IP-Address>
 
 ### Step 1.2: Add two more roles to your Ansible playbook
+
 - Sonarqube: Sonarqube is an open-source platform developed by SonarSource for continuous inspection of code quality to perform automatic reviews with static analysis of code to detect bugs, code smells, and security vulnerabilities (source: https://en.wikipedia.org/wiki/SonarQube)
   
 - Artifactory: JFrog Artifactory is a universal DevOps solution providing end-to-end automation and management of binaries and artifacts through the application delivery process that improves productivity across your development ecosystem. (source: https://www.jfrog.com/confluence/display/JFROG/JFrog+Artifactory)
@@ -65,10 +66,10 @@ In previous projects, you have been launching Ansible commands manually from a C
 - Once you're in the Blue Ocean UI, click Create Pipeline
 - Select GitHub
 - On the Connect to GitHub step, click 'Create an access token here' to create your access token
-- Type in the token name of your choice, leave everything as in and click Generate token
+- Type in the token name of your choice, leave everything as is and click Generate token
 - Copy the generated token and paste in the field provided in Blue Ocean and click connect
 - Select your organization (typically your GitHub name)
-- Select the repo to create the pipeline from (ansible-config-mgt)
+- Select the repo to create the pipeline from
 - Blue Ocean would take you to where to create a pipeline, since we are not doing this now, click Administration from the top bar to exit Blue Ocean.
 - Create Jenkinsfile
   - Inside the Ansible project, create a deploy folder
@@ -98,6 +99,7 @@ In previous projects, you have been launching Ansible commands manually from a C
   Since our pipeline is multibranch, we could build all the branches in the repo independently. To see this in action, 
   - Create a new git branch and name it features/jenkinspipeline-stages
   - Add a new build stage "Test"
+
     ```
     pipeline {
     agent any
@@ -120,6 +122,9 @@ In previous projects, you have been launching Ansible commands manually from a C
         }
     }
     ```
+    
+    
+
   - To make the new branch show in Jenkins UI, click Administration to exit Blue Ocean, click the project and click Scan Repository Now from the left pane
   - Refresh the page and you should see the new branch.
   - Open Blue Ocean and you should see the new branch building (or has finished building)
@@ -151,46 +156,31 @@ In previous projects, you have been launching Ansible commands manually from a C
 - Create Jenkinsfile from scratch (delete all the current stages in the file)
   - Add a new stage to clone the GitHub repo
     ```
-    stage('Clone repo') {
+    stage('SCM Checkout') {
       steps {
-        git(branch: 'dev', url: 'https://github.com/Anefu/ansible-config-mgt.git')
+        git(branch: 'main', url: 'https://github.com/TheCountt/config-ansible-mgt.git')
       }
     }
     ```
-    The above step clones the repo from the dev branch.
-
-  - Add another stage to edit /etc/ansible/ansible.cfg file
-    ```
-    stage('Update ansible.cfg') {
-      steps {
-        sh ('sudo sed -i -e "/roles_path = \\/[a-z]*\\/*/a\\roles_path = $cpath" -e "/roles_path = \\/[a-z]*\\/*/d" /etc/ansible/ansible.cfg')
-      }
-    }
-    Note: cpath is an environment variable I declared in the Jenkinsfile that resolves to the absolute path to the current workspace
-    ```
-    Blocker: Jenkins requires a password to run the script as sudo, to circumvent this, I added jenkins user to the sudoers file with permissions to use the sudo command without password.
-    ```
-    Run `sudo visudo` and add the following line
-    jenkins ALL=(ALL) NOPASSWD: ALL
-    ```
-
+    
   - Add the next stage, to run the playbook
     ```
-    stage('Run playbook') {
-      steps {
-        ansiblePlaybook(credentialsId: 'private-key', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory/${inventory}', playbook: 'playbooks/site.yml', tags: '${tag}')
+    stage('Execute Ansible') {
+        steps {
+            ansiblePlaybook colorized: true, credentialsId: 'privateKEY', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory/${inventory_file}', playbook: 'playbooks/site.yml'}
+        }
       }
     }
     ```
-    This build stage requires a credentails file (private-key) which can be created by following these steps:
+    This build stage requires a credentails file (privateKEY) which can be created by following these steps:
     - Click Manage Jenkins and scroll down a bit to Manage Credentials
     - Under Stores scoped to Jenkins on the right, click on Jenkins
     - Under System, click the Global credentials (unrestricted)
     - Click Add Credentials on the left
     - For credentials kind, choose SSH username with private key
-    - Enter the ID as private-key
-    - Enter the username Jenkins would use (ubuntu/ec2-user, don't worry about this, since we specify appropriate users in our Ansible inventory files)
-    - Enter the secret key (the contents of your <\private-key>.pem file from AWS)
+    - Enter the ID as privateKEY
+    - Enter the username Jenkins would use (ubuntu/ec2-user)
+    - Enter the secret key (the contents of your <\private_key>.pem file from AWS)
     - Click OK to save
   - You could add a stage that cleans your workspace after every build (whether failed, successful or otherwise)
     ```
@@ -209,19 +199,58 @@ To deploy to other environments, we have to use parameters
 - Update SIT environment inventory file with new servers
 - Update Jenkinsfile to add parameters
   ```
-  pipeline {
-    agent any
-
-    parameters {
-      string(name: 'inventory', defaultValue: 'dev',  description: 'This is the inventory file for the environment to deploy configuration')
+  pipeline{
+   agent any
+   environment {
+      ANSIBLE_CONFIG="${WORKSPACE}/deploy/ansible.cfg"
     }
-  ...
+     parameters {
+      string(name: 'inventory_file', defaultValue: '${inventory_file}', description: 'selecting the environment')
+          }
   ```
   The above snippet adds a parameter 'inventory' with a default value 'dev' and a description for the parameter. We can use parameters in the Ansible stage by changing the **inventory/dev** to **inventory/${inventory}**
   ![](imgs/sit.png)
-- Add a new parameter to run specific parts of the Ansible playbook using tags
+  Overall, the Jenkinsfile in the deploy folder(deploy/Jenkinsfile) should like this
+  
   ```
-  string(name: 'tag', defaultValue: 'all',  description: 'Tags to specify which Ansible plays to run')
+  pipeline{
+   agent any
+   environment {
+      ANSIBLE_CONFIG="${WORKSPACE}/deploy/ansible.cfg"
+    }
+     parameters {
+      string(name: 'inventory_file', defaultValue: '${inventory_file}', description: 'selecting the environment')
+          }
+   stages{
+      stage("Initial cleanup") {
+          steps {
+            dir("${WORKSPACE}") {
+              deleteDir()
+            }
+          }
+        }
+      stage('SCM Checkout') {
+         steps{
+            git branch: 'main', url: 'https://github.com/TheCountt/config-mgt-ansible.git'
+         }
+       }
+      stage('Prepare Ansible For Execution') {
+        steps {
+          sh 'echo ${WORKSPACE}'
+        }
+     }
+      stage('Execute Ansible Playbook') {
+        steps {
+            ansiblePlaybook colorized: true, credentialsId: 'privateKEY', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory/${inventory_file}', playbook: 'playbooks/site.yml', skippedTags: 'skipped', tags: 'run'
+        }
+      }
+      stage('Clean Workspace after build'){
+        steps{
+          cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, cleanWhenNotBuilt: true, cleanWhenUnstable: true, deleteDirs: true)
+        }
+      }
+   }
+}
   ```
   ![](imgs/sit_tags.png)
 ## Step 2: CI/CD Pipeline for a TODO Application
