@@ -208,8 +208,9 @@ To deploy to other environments, we have to use parameters
       string(name: 'inventory_file', defaultValue: '${inventory_file}', description: 'selecting the environment')
           }
   ```
-  The above snippet adds a parameter 'inventory' with a default value 'dev' and a description for the parameter. We can use parameters in the Ansible stage by changing the **inventory/dev** to **inventory/${inventory}**
+  The above snippet adds a parameter 'inventory' with a default value 'dev' and a description for the parameter. We can use parameters in the Ansible stage by changing the **inventory/dev** to **inventory/${inventory}**.
   ![](imgs/sit.png)
+  
   Overall, the Jenkinsfile in the deploy folder(deploy/Jenkinsfile) should like this
   
   ```
@@ -253,6 +254,7 @@ To deploy to other environments, we have to use parameters
 }
   ```
   ![](imgs/sit_tags.png)
+  
 ## Step 2: CI/CD Pipeline for a TODO Application
 ### Step 2.1: Configure Artifactory
 - Create an Ansible role to install Artifactory (https://github.com/Anefu/ansible-config-mgt/tree/master/roles/artifactory)
