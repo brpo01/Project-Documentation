@@ -54,7 +54,7 @@
 
 ### Step 1.2: Add two more roles to your Ansible playbook
 
-- Sonarqube: Sonarqube is an open-source platform developed by SonarSource for continuous inspection of code quality to perform automatic reviews with static analysis of code to detect bugs, code smells, and security vulnerabilities (source: https://en.wikipedia.org/wiki/SonarQube)
+- Sonarqube: Sonarqube is an open-source platform developed by SonarSource for continuous inspection of code quality to perform automatic reviews with static analysis of code to detect bugs, code smells, and security vulnerabilities.
   
 - Artifactory: JFrog Artifactory is a universal DevOps solution providing end-to-end automation and management of binaries and artifacts through the application delivery process that improves productivity across your development ecosystem. (source: https://www.jfrog.com/confluence/display/JFROG/JFrog+Artifactory)
 
@@ -751,3 +751,24 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
 [![Watch the video](imgs/webhook.png)](https://drive.google.com/file/d/1gaR43fdd3nGOi85pcp4GgcHQAv92A4Df/view?usp=sharing)
 
 ## Step 6: Deploy to all Environments
+
+
+## Credits
+
+https://www.jenkins.io/doc/book/blueocean/getting-started/
+
+https://en.wikipedia.org/wiki/SonarQube
+
+https://www.jfrog.com/confluence/display/JFROG/JFrog+Artifactory
+
+https://www.jenkins.io/doc/book/blueocean/getting-started/#accessing-blue-ocean
+
+https://dev.to/nicoavila/how-to-validate-your-jenkinsfile-locally-before-committing-334l
+
+https://matthiasnoback.nl/2019/09/using-phploc-for-quick-code-quality-estimation-part-1/
+
+https://plugins.jenkins.io/sonar/
+
+https://getcomposer.org/doc/00-intro.md#globally
+
+https://code.visualstudio.com/docs/setup/linux#_visual-studio-code-is-unable-to-watch-for-file-changes-in-this-large-workspace-error-enospc
