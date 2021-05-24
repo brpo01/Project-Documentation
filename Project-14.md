@@ -251,9 +251,9 @@ To deploy to other environments, we have to use parameters
         }
       }
    }
-}
-```
-  
+  }
+  ```
+
 ## Step 2: CI/CD Pipeline for a TODO Application
 
 ### Step 2.1: Configure Artifactory
