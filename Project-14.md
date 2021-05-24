@@ -252,18 +252,31 @@ To deploy to other environments, we have to use parameters
       }
    }
 }
-  ```
-  ![](imgs/sit_tags.png)
+```
   
 ## Step 2: CI/CD Pipeline for a TODO Application
+
 ### Step 2.1: Configure Artifactory
-- Create an Ansible role to install Artifactory (https://github.com/Anefu/ansible-config-mgt/tree/master/roles/artifactory)
+
+- Create an Ansible role to install Artifactory(You may install manually first
+
 - Run the role against the Artifactory server
+
 ### Step 2.2: Prepare Jenkins
 - Fork the php-todo repository (https://github.com/darey-devops/php-todo.git)
-- Install the following packages:
+- On you Jenkins server, install PHP, its dependencies(Feel free to do this manually at first, then update your Ansible accordingly later)
+
   ```
-  sudo apt install -y zip libapache2-mod-php phploc php-{xml,bcmath,bz2,intl,gd,mbstring,mysql,zip}
+  sudo apt install -y zip libapache2-mod-php php7.4-fpm phploc php-{xml,bcmath,bz2,intl,gd,mbstring,mysql,zip,xdebug}
+  
+  ```
+  Install PHP Composer manually:
+ 
+ ```
+    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+    php composer-setup.php
+    mv composer.phar /usr/local/bin/composer
   ```
 - Install Jenkins plugins
   - Plot plugin: to display tests reports and code coverage information
