@@ -281,9 +281,24 @@ To deploy to other environments, we have to use parameters
     
     mv composer.phar /usr/local/bin/composer
   ```
+- Install nodejs and npm
+
+```
+sudo apt-get update -y
+sudo apt-get install nodejs npm -y
+```
+- Install typescript using node package manager(npm, we just installed). Only root user can install typecript.
+
+```
+su
+npm install -g typescript
+
+```
+
 - Install Tthe following plugins on Jenkins UI
   - Plot plugin: to display tests reports and code coverage information
   - Artifactory plugin: to easily deploy artifacts to Artifactory server
+- Go to the artifactory URL(http://<artifactory-server-ip>:8082) and create a local repository named php-todo.(Default username and password is admin. After logging in, change   the password)
 - Configure Artifactory in Jenkins UI
   - Click Manage Jenkins, click Configure System
   - Scroll down to JFrog, click Add Artifactory Server
@@ -291,7 +306,10 @@ To deploy to other environments, we have to use parameters
   - Enter the URL as:
     ```
     http://<artifactory-server-ip>:8082/artifactory
+
     ```
+  - Enter the Default Deploy Credentials(the username and the changed password)
+
     ![](imgs/frog.png)
 ### Step 2.3: Integrate Artifactory repository with Jenkins
 - On Jenkins server, install mysql-client
