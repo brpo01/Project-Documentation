@@ -258,7 +258,7 @@ To deploy to other environments, we have to use parameters
 
 ### Step 2.1: Configure Artifactory
 
-- Create an Ansible role to install Artifactory(You may install manually first
+- Create an Ansible role to install Artifactory(You may install manually first)
 
 - Run the role against the Artifactory server
 
@@ -294,8 +294,10 @@ To deploy to other environments, we have to use parameters
     ```
     ![](imgs/frog.png)
 ### Step 2.3: Integrate Artifactory repository with Jenkins
-- Create a dummy Jenkinsfile in the root of the php-todo repo
-- In Blue Ocean, create multibranch pipeline
+- On Jenkins server, install mysql-client
+- Create a dummy Jenkinsfile in php-todo repo
+- In Blue Ocean, create multibranch php-todo pipeline(follow the previous steps earlier)
+- Spin up an instance for a database, install and configure mysql-server. 
 - Create a database and user on the database server
   ```
   CREATE DATABASE homestead;
@@ -336,13 +338,8 @@ To deploy to other environments, we have to use parameters
       }
     }
     ```
-    **Blockers:** You have to install PHP Composer manually by:
-    ```
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-    php composer-setup.php
-    mv composer.phar /usr/local/bin/composer
-    ```
+   
+
 - Update Jenkinsfile to include unit tests
   ```
   stage('Execute Unit Tests') {
