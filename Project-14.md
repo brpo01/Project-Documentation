@@ -470,19 +470,22 @@ We will make some Linux Kernel configuration changes to ensure optimal performan
 ### Step 3.1: Tune Linux Kernel
  
 On the sonarqube server, log into to the root user and run the following commands
-  ```
-  su
+    ```
+      su
   sysctl -w vm.max_map_count=262144
   sysctl -w fs.file-max=65536
   ulimit -n 65536
-  ulimit -u 4096
+  ulimit -u 4096 
+    ```
+    
 
 Open the /etc/security/limits.conf file and append the following.
+    
   ```
   sonarqube   -   nofile   65536
   sonarqube   -   nproc    4096
   ```
-  To enable persistence after reboot, open the /etc/sysctl.conf and append the following.
+To enable persistence after reboot, open the /etc/sysctl.conf and append the following.
     
   ```
   vm.max_map_count=262144
