@@ -529,7 +529,7 @@ Open the /etc/security/limits.conf file and append the following.
   sudo systemctl start postgresql
   sudo systemctl enable postgresql
   ```
-- Change the default password for postgres user (to whatever password you can easily remember)
+- Change the default password for postgres user (to any password you can easily remember)
   ```
   sudo passwd postgres
   ```
@@ -603,10 +603,11 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
       ```
       sudo passwd sonar
       ```
-    - Run the following command and add the following line
+    - Run the following command. 
       ```
       sudo visudo
       ```
+    Input the th below line into file, save and exit
       ```
       sonar ALL=(ALL) NOPASSWD: ALL
       ```
@@ -668,7 +669,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
 ### Step 3.5: Access Sonarqube
 - Access the SonarQube by going to http://\<sonar-qube-ip>/9000, use **admin** as your username and password
 ![](imgs/sonar.png)
-- If you are having a timeout error, check the security group attached to the Sonarqube instance.
+- Do not forget to open ports 9000 and 5432 on the security group.
 
 ### Step 3.6: Configure SonarQube and Jenkins for Quality Gate
 - Install SonarQube plugin in Jenkins UI
@@ -719,18 +720,9 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
   sonar.sourceEncoding=UTF-8
   sonar.php.exclusions=**/vendor/**
   sonar.php.coverage.reportPaths=build/coverage/phploc.csv
-  sonar.php.tests.reportPath=reports/unitreport.xml
+  sonar.php.tests.reportPath=build/coverage.xml
   ```
-  Install xdebug and configure the ini file, you can get the path to the file by running
-  ```
-  php --ini | grep xdebug
-  ```
-  And paste in:
-  ```
-  xdebug.mode=coverage
-  ```
-  **Blocker:** the sonar.php.coverage.reportPaths and sonar.php.tests.reportPath should point to the files in build/coverage/ or else the Quality Gate would be incomplete
-- To generate pipleline code from Jenkins UI, go to Dashboard, click on the pipeline project (php-todo) and scroll down to Pipeline Syntax
+    
 - If everything was configured properly, you should see something like this: ![](imgs/endtoend.png)
 - Navigate to your php-todo dashboard on SonarQube UI ![](imgs/qualitygate.png)
 
@@ -768,9 +760,8 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
   ![](imgs/branch-testing.png)
 
 ## Step 4: Configure Jenkins slave servers
-- Spin up a new EC2 Instance
-  - Install Java and Jenkins
-  - Install necessary packages from Steps 1.4, 2.3 Blocker and 2.4
+- Spin up a new EC2 Instance(ubuntu like the master(bastion) server)
+  - Install all the neccessary software packages just like you did with the master(bastion) server
   - Create new user to be used by jenkins
     ```
     sudo useradd -d /var/lib/jenkins jenkins
@@ -832,3 +823,5 @@ https://plugins.jenkins.io/sonar/
 https://getcomposer.org/doc/00-intro.md#globally
 
 https://code.visualstudio.com/docs/setup/linux#_visual-studio-code-is-unable-to-watch-for-file-changes-in-this-large-workspace-error-enospc
+    
+https://stackoverflow.com/questions/60269790/jenkins-set-a-parameter-defaultvalue-dynamically
