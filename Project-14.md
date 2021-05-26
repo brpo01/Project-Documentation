@@ -281,13 +281,13 @@ To deploy to other environments, we have to use parameters
     
     mv composer.phar /usr/local/bin/composer
   ```
-- Install nodejs and npm
+- Install nodejs
 
 ```
 sudo apt-get update -y
-sudo apt-get install nodejs npm -y
+sudo apt-get install nodejs -y
 ```
-- Install typescript using node package manager(npm, we just installed). Only root user can install typecript.
+- Install typescript using node package manager(npm). Only root user can install typecript.
 
 ```
 su
@@ -446,32 +446,41 @@ This plugin provides generic plotting (or graphing) capabilities in Jenkins. It 
   ```
   This build job tells Jenkins to trigger a job in the ansible-config-mgt pipeline. Since the ansible-config-mgt pipeline requires some parameters, we pass them using the 'parameters' value.
 
-## Step 3: Configure SonarQube
+## Step 3: Install and Configure SonarQube on Ubuntu 20.04 With PostgreSQL as Backend Database
+    
 Software Quality - The degree to which a software component, system or process meets specified requirements based on user needs and expectations.
 
 Software Quality Gates - Quality gates are basically acceptance criteria which are usually presented as a set of predefined quality criteria that a software development project must meet in order to proceed from one stage of its lifecycle to the next one.
+    
+We will make some Linux Kernel configuration changes to ensure optimal performance of the tool - we will increase vm.max_map_count, file discriptor and ulimit
 
 ### Step 3.1: Tune Linux Kernel
+ 
+On the sonarqube server, log into to the root user and run the following commands
   ```
-  sudo sysctl -w vm.max_map_count=262144
-  sudo sysctl -w fs.file-max=65536
+  su
+  sysctl -w vm.max_map_count=262144
+  sysctl -w fs.file-max=65536
   ulimit -n 65536
   ulimit -u 4096
 
-  ##This changes do not persist after system reboot
-  ```
-  To enable persistence after reboot, open the /etc/security/limits.conf file and append the following.
+Open the /etc/security/limits.conf file and append the following.
   ```
   sonarqube   -   nofile   65536
   sonarqube   -   nproc    4096
   ```
-  **Blocker:** I noticed that running SonarQube is quite compute intensive, so I used a t2.medium instance instead of a t2.micro. And the **sudo sysctl -w vm.max_map_count=262144** does not make the vm.max_map_count change persist after boot (for some odd reason), so I had to append the command to the /**etc/bash.bashrc** file.
+  To enable persistence after reboot, open the /etc/sysctl.conf and append the following.
+    
+  ```
+  vm.max_map_count=262144
+  fs.file-max=65536 
+  ```
 
-### Step 3.2: Update system packages and Install Java and other required packages
+### Step 3.2: Update system packages and Install Java(sonarqube is java-based) and other required packages
 - Update and upgrade packages
   ```
-  sudo apt-get update
-  sudo apt-get upgrade
+  sudo apt-get update -y
+  sudo apt-get upgrade -y
   ```
 - Install wget and unzip packages
   ```
@@ -495,7 +504,7 @@ Software Quality Gates - Quality gates are basically acceptance criteria which a
   ```
   sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
   ```
-- Add repo key
+- Download PostgreSQL software
   ```
   wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
   ```
