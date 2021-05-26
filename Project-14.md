@@ -307,19 +307,20 @@ npm install -g typescript
 
 ```
 
-- Install Tthe following plugins on Jenkins UI
+Install Tthe following plugins on Jenkins UI
   - Plot plugin: to display tests reports and code coverage information
   - Artifactory plugin: to easily deploy artifacts to Artifactory server
-- Go to the artifactory URL(http://<artifactory-server-ip>:8082) and create a local generic repository named *php-todo*(Default username and password is admin. After logging in, change the password)
-- Configure Artifactory in Jenkins UI
+  - Go to the artifactory URL(http://<artifactory-server-ip>:8082) and create a local generic repository named *php-todo*(Default username and password is admin. After logging in, change the password)
+Configure Artifactory in Jenkins UI
   - Click Manage Jenkins, click Configure System
   - Scroll down to JFrog, click Add Artifactory Server
   - Enter the Server ID
   - Enter the URL as:
     
- ```
- http://<artifactory-server-ip>:8082/artifactory
- ```
+```
+http://<artifactory-server-ip>:8082/artifactory
+```
+    
   - Enter the Default Deploy Credentials(the username and the changed password of artifactory)
 
     ![](imgs/frog.png)
