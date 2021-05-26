@@ -281,12 +281,24 @@ To deploy to other environments, we have to use parameters
     
     mv composer.phar /usr/local/bin/composer
   ```
+
+
+- Configure the php.ini file, you can get the path to the file by running
+  ```
+  php --ini | grep xdebug
+  ```
+ After getting the path to the file, enter the file and paste in:
+  ```
+  xdebug.mode=coverage
+
+```
 - Install nodejs
 
 ```
 sudo apt-get update -y
 sudo apt-get install nodejs -y
 ```
+
 - Install typescript using node package manager(npm). Only root user can install typecript.
 
 ```
@@ -693,7 +705,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
         }
     }
   ```
-  Save and run the pipeline to install the scanner (you might get an error initially)
+  Save and run the pipeline to install the scanner. An error will be generated but it will also create "/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/conf/sonar-scanner.properties" directory
 
 - Edit sonar-scanner.properties file
   ```
@@ -706,7 +718,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
   #----- Default source code encoding
   sonar.sourceEncoding=UTF-8
   sonar.php.exclusions=**/vendor/**
-  sonar.php.coverage.reportPaths=build/logs/phploc.csv
+  sonar.php.coverage.reportPaths=build/coverage/phploc.csv
   sonar.php.tests.reportPath=reports/unitreport.xml
   ```
   Install xdebug and configure the ini file, you can get the path to the file by running
