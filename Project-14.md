@@ -301,11 +301,12 @@ To deploy to other environments, we have to use parameters
   xdebug.mode=coverage
 
 ```
-- Install nodejs
+- Install nodejs and npm
 
 ```
 sudo apt-get update -y
 sudo apt-get install nodejs -y
+sudo apt install npm -y
 ```
 
 - Install typescript using node package manager(npm). Only root user can install typecript.
