@@ -144,7 +144,7 @@ In previous projects, you have been launching Ansible commands manually from a C
     6. Eventually, your main branch should have a successful pipeline like this in blue ocean
     ```
     Your final pipeline should look like this:
-    ![](imgs/1stjenkins.png)
+  ![{034E93DC-F506-410F-8C70-EB490FC3DAA2} png](https://user-images.githubusercontent.com/76074379/119834964-44596780-beb5-11eb-8497-0b51ad3538db.jpg)
 
 ### Step 1.4: Running Ansible Playbook from Jenkins
 - Install Ansible on your Jenkins server
