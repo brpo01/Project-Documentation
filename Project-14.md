@@ -157,7 +157,7 @@ In previous projects, you have been launching Ansible commands manually from a C
   - Click Available tab and in the search bar, enter Ansible and click the check box next to the plugin
   - Scroll down and click 'Install without restart'
 - Create Jenkinsfile from scratch (delete all the current stages in the file)
-  - Add a new stage to clone the GitHub repo
+  - Add a new stage to clone the GitHub repository
     ```
     stage('SCM Checkout') {
       steps {
@@ -166,7 +166,8 @@ In previous projects, you have been launching Ansible commands manually from a C
     }
     ```
     
-  - Add the next stage, to run the playbook
+  - Add the next stage, to run the playbook. For this, we need to click on *Pipeline Syntax* at bottom left of Jenkins UI and input appropriate value and generate a pipeline script. (https://www.youtube.com/watch?v=PRpEbFZi7nI&feature=youtu.be)
+ 
     ```
     stage('Execute Ansible') {
         steps {
@@ -185,7 +186,7 @@ In previous projects, you have been launching Ansible commands manually from a C
     - Enter the username Jenkins would use (ubuntu/ec2-user)
     - Enter the secret key (the contents of your <\private_key>.pem file from AWS)
     - Click OK to save
-  - You could add a stage that cleans your workspace after every build (whether failed, successful or otherwise)
+  - You could add a stage that cleans your workspace after every build
     ```
     stage('Clean up') {
       steps {
@@ -195,7 +196,11 @@ In previous projects, you have been launching Ansible commands manually from a C
     ```
   - Commit and push your changes
   - Go to Blue Ocean and trigger a build against the branch. If everything is configured properly, you should see something like this:
-    ![](imgs/success1.png)
+  
+    ![{73E0A380-8DB1-4859-9B94-16D0C0DCD0A8} png](https://user-images.githubusercontent.com/76074379/119836654-c1391100-beb6-11eb-89e7-6fd649578185.jpg)
+    
+    ![{A9351339-EDBE-4F06-BB0F-3C35320D7ABE} png](https://user-images.githubusercontent.com/76074379/119837149-2b51b600-beb7-11eb-8a81-7def45aae7e7.jpg)
+    
 
 ### Step 1.5: Parameterizing Jenkinsfile for Ansible Development
 To deploy to other environments, we have to use parameters
