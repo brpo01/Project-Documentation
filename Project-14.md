@@ -156,6 +156,9 @@ In previous projects, you have been launching Ansible commands manually from a C
   - Click Manage Plugins
   - Click Available tab and in the search bar, enter Ansible and click the check box next to the plugin
   - Scroll down and click 'Install without restart'
+- After the ansible plugin has been installed. Go to *Manage Jenkins*
+  - Click on *Global Configuration Tools*
+  - Scroll down to Ansible and click on it, in the 'Name' box, type *ansible* and in the 'Path to ansible Executables directory' box, type the path to ansible(you can check this using command "which ansible" on the Linux terminal)
 - Create Jenkinsfile from scratch (delete all the current stages in the file)
   - Add a new stage to clone the GitHub repository
     ```
@@ -216,8 +219,6 @@ To deploy to other environments, we have to use parameters
       string(name: 'inventory_file', defaultValue: '${inventory_file}', description: 'selecting the environment')
           }
   ```
-  The above snippet adds a parameter 'inventory' with a default value 'dev' and a description for the parameter. We can use parameters in the Ansible stage by changing the **inventory/dev** to **inventory/${inventory}**.
-  ![](imgs/sit.png)
   
   Overall, the Jenkinsfile in the deploy folder(deploy/Jenkinsfile) should like this
   
@@ -266,12 +267,12 @@ To deploy to other environments, we have to use parameters
 
 ### Step 2.1: Configure Artifactory
 
-- Create an Ansible role to install Artifactory(You may install manually first)
+- Create an Ansible role to install Artifactory(You may install manually first on artifactory server: https://www.howtoforge.com/tutorial/ubuntu-jfrog/)
 
 - Run the role against the Artifactory server
 
 ### Step 2.2: Prepare Jenkins
-- Fork the php-todo repository (https://github.com/darey-devops/php-todo.git)
+- Fork the php-todo repository (https://github.com/darey-devops/php-todo.git) into Bastion(Jenkins) Server
 - On you Jenkins server, install PHP, its dependencies(Feel free to do this manually at first, then update your Ansible accordingly later)
 
   ```
@@ -821,6 +822,8 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
 https://www.jenkins.io/doc/book/blueocean/getting-started/
 
 https://en.wikipedia.org/wiki/SonarQube
+
+https://www.howtoforge.com/tutorial/ubuntu-jfrog/
 
 https://www.jfrog.com/confluence/display/JFROG/JFrog+Artifactory
 
