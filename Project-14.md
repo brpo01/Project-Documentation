@@ -68,13 +68,13 @@ In previous projects, you have been launching Ansible commands manually from a C
 - On the Connect to GitHub step, click 'Create an access token here' to create your access token
 - Type in the token name of your choice, leave everything as is and click Generate token
 - Copy the generated token and paste in the field provided in Blue Ocean and click connect
-- Select your organization (typically your GitHub name)
-- Select the repo to create the pipeline from
+- Select your organization (typically your GitHub repository name)
+- Select the repository to create the pipeline from
 - Blue Ocean would take you to where to create a pipeline, since we are not doing this now, click Administration from the top bar to exit Blue Ocean.
 - Create Jenkinsfile
   - Inside the Ansible project, create a deploy folder
-  - In the deploy folder, create a file named **Jenkinsfile** (no extension)
-  - Add the following snippet
+  - In the deploy folder, create a file named **Jenkinsfile**
+  - Add the following snippet into the newly created file named **Jenkinsfile**
     ```
     pipeline {
     agent any
@@ -125,9 +125,12 @@ In previous projects, you have been launching Ansible commands manually from a C
     
     
 
-  - To make the new branch show in Jenkins UI, click Administration to exit Blue Ocean, click the project and click Scan Repository Now from the left pane
+  - To make the new branch show in Jenkins UI, click Administration to exit Blue Ocean, click the project and click *Scan Repository Now* from the left pane
   - Refresh the page and you should see the new branch.
   - Open Blue Ocean and you should see the new branch building (or has finished building)
+  
+  ![{6FD8E835-A19D-4429-865E-354B9E996FFF} png](https://user-images.githubusercontent.com/76074379/119834508-e036a380-beb4-11eb-8110-0ca43e16163d.jpg)
+  
     ```
     Quick task:
     1. Create a pull request to merge the latest code into the `main branch`
