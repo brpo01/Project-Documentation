@@ -547,6 +547,9 @@ To enable persistence after reboot, open the /etc/sysctl.conf and append the fol
     java -version
     ```
 ### Step 3.3: Install and Setup PostgreSQL 10 Database for SonarQube
+    
+- Go to the security group and open port 5432 for postgreSQL on Sonarqube Instance
+    
 - Add PostgreSQL to repo list
   ```
   sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
