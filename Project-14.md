@@ -702,7 +702,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
       sudo systemctl status sonar
       ```
 ### Step 3.5: Access Sonarqube
-- Access the SonarQube by going to http://\<sonar-qube-ip>/9000, use **admin** as your username and password
+- Access the SonarQube by going to http://<sonar-qube-ip>:9000, use **admin** as your username and password
 ![](imgs/sonar.png)
 - Do not forget to open ports 9000 and 5432 on the security group.
 
@@ -718,7 +718,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
 - Configure SonarQube webhook for Jenkins
   -  Navigate to Administration > Configuration > Webhooks > Create
   - Enter the name
-  - Enter URL as http://\<jenkins-server-ip>:8080/sonar-webhook/
+  - Enter URL as http://<jenkins-server-ip>:8080/sonar-webhook/
 
 - Setup SonarScanner for Jenkins
   - In Jenkins UI, go to Manage Jenkins > Global Tool Configuration
@@ -790,22 +790,23 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
     }
   ```
   You should get the following when you run the pipeline:
-  ![](imgs/timeout.png)
-  For specific branches (Quality Gate does not execute I am running from 'testing' branch):
+  
+  When running a non-specified branch, SonarQube Quality Gate stage is skipped
   ![](imgs/branch-testing.png)
 
 ## Step 4: Configure Jenkins slave servers
-- Spin up a new EC2 Instance(ubuntu like the master(bastion) server)
+- Spin up a new EC2 Instance(like the master(bastion) server)
   - Install all the neccessary software packages just like you did with the master(bastion) server
-  - Create new user to be used by jenkins
+  - Create new a directory named /home/ubuntu/jenkins; a user named jenkins, set password and grant sudo privilege to newly created user jenkins
     ```
-    sudo useradd -d /var/lib/jenkins jenkins
+    sudo mkdir /home/ubuntu/jenkins
+    sudo useradd jenkins
     sudo passwd jenkins
+    sudo usermod -a -G sudo jenkins
     ```
-  - Create the default root directory and set permissions
+  - Set permissions of newly created directory
     ```
-    sudo mkdir /var/lib/jenkins
-    sudo chown -R jenkins:jenkins /var/lib/jenkins
+    sudo chown -R jenkins:jenkins /home/ubuntu/jenkins
     ```
   - Generate SSH Key for jenkins to use when logging in
     ```
@@ -824,14 +825,16 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
   - Navigate to Manage Jenkins > Manage Nodes
   - Click New Node
   - Enter name of the node and click the 'Permanent Agent' button and click the OK button
-  - Fill in the remote root directory as /var/lib/jenkins
+  - Fill in the remote root directory as /home/ubuntu/jenkins
   - Set 'Host' value as the IP of the slave node
   - For Launch Method, select Launch Agents via SSH
   - Add new Jenkins SSH with username and private key credentials with username as jenkins and private key as the private key you copied from the node
   - For Host Key Verification Strategy, select Manually trusted key validation strategy
   - Click Save
 
-- Repeat the above steps to add more servers ![](imgs/jenkins-nodes.png)
+- Repeat the above steps to add more servers
+    
+  
 
 ## Step 5: Configure GitHub WebHook for Automatic Build of Pushed Code
 [![Watch the video](imgs/webhook.png)](https://drive.google.com/file/d/1gaR43fdd3nGOi85pcp4GgcHQAv92A4Df/view?usp=sharing)
