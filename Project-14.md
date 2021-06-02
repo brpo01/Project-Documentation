@@ -799,31 +799,8 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
 
 ## Step 4: Configure Jenkins slave servers
 - Spin up a new EC2 Instance(like the master(bastion) server)
-  - Install all the neccessary software packages just like you did with the master(bastion) server
-  - Create new a directory named /home/ubuntu/jenkins; a user named jenkins, set password and grant sudo privilege to newly created user jenkins
-    ```
-    sudo mkdir /home/ubuntu/jenkins
-    sudo useradd jenkins
-    sudo passwd jenkins
-    sudo usermod -a -G sudo jenkins
-    ```
-  - Set permissions of newly created directory
-    ```
-    sudo chown -R jenkins:jenkins /home/ubuntu/jenkins
-    ```
-  - Generate SSH Key for jenkins to use when logging in
-    ```
-    su - jenkins
-    ssh-keygen -t rsa -C "Jenkins agent key"
-    ```
-  - Add id_rsa.pub to authorized_keys file
-    ```
-    # cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-    # chmod 600 ~/.ssh/authorized_keys
-    ```
-  - Copy SSH private key to clipboard
-    ```
-    cat ~/.ssh/id_rsa
+  - Install all the neccessary software packages just like you did with the master(bastion) serve
+  
 - On the main Jenkins server
   - Navigate to Manage Jenkins > Manage Nodes
   - Click New Node
@@ -831,7 +808,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
   - Fill in the remote root directory as /home/ubuntu/jenkins
   - Set 'Host' value as the IP of the slave node
   - For Launch Method, select Launch Agents via SSH
-  - Add new Jenkins SSH with username and private key credentials with username as jenkins and private key as the private key you copied from the node
+  - Add SSH with username and private key credentials with username as ubuntu and private key as the private key you copied from the node
   - For Host Key Verification Strategy, select Manually trusted key validation strategy
   - Click Save
 
@@ -840,7 +817,6 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
   
 
 ## Step 5: Configure GitHub WebHook for Automatic Build of Pushed Code
-[![Watch the video](imgs/webhook.png)](https://drive.google.com/file/d/1gaR43fdd3nGOi85pcp4GgcHQAv92A4Df/view?usp=sharing)
 
 ## Step 6: Deploy to all Environments
 
