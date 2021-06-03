@@ -488,7 +488,21 @@ This plugin provides generic plotting (or graphing) capabilities in Jenkins. It 
     }
   }
   ```
-  This build job tells Jenkins to trigger a job in the ansible-config-mgt pipeline. Since the ansible-config-mgt pipeline requires some parameters, we pass them using the 'parameters' value.
+ **Note**: The stage above will not deploy to "dev" environment if you do not specify it in the String ParameterValue at the beginning of the script. The "defaultValue" should be updated to "dev". That way the application will be automatically deployed to Dev environment.
+```
+    pipeline{
+   agent any
+   environment {
+      ANSIBLE_CONFIG="${WORKSPACE}/deploy/ansible.cfg"
+    }
+     parameters {
+      string(name: 'inventory_file', defaultValue: 'dev', description: 'selecting the environment')
+          }
+```
+    
+ This build job tells Jenkins to trigger a job in the ansible-config-mgt pipeline. Since the ansible-config-mgt pipeline requires some parameters, we pass them using the 'parameters' value.(I provisioned servers for SIT,DEV,CI environments only)
+    
+ ![{91015C6F-22DE-41B3-B463-117129E50214} png](https://user-images.githubusercontent.com/76074379/120632015-6014be80-c41d-11eb-9fc6-6d82d5b57667.jpg)
 
 ## Step 3: Install and Configure SonarQube on Ubuntu 20.04 With PostgreSQL as Backend Database
     
