@@ -488,29 +488,21 @@ This plugin provides generic plotting (or graphing) capabilities in Jenkins. It 
     }
   }
   ```
- **Note**: The stage above will not deploy to "dev" environment if you do not specify it in the String ParameterValue at the beginning of the script. The "defaultValue" should be updated to "dev". That way the application will be automatically deployed to Dev environment.
 ```
-    pipeline{
-   agent any
-   environment {
-      ANSIBLE_CONFIG="${WORKSPACE}/deploy/ansible.cfg"
-    }
-     parameters {
-      string(name: 'inventory_file', defaultValue: 'dev', description: 'selecting the environment')
-          }
+**Note**: The stage above will not deploy to "dev" environment if you do not specify it in the String ParameterValue at the beginning of the script. The "defaultValue" should be changed from "${inventory_file}" to "dev". That way the application will be automatically deployed to Dev environment.
 ```
     
  This build job tells Jenkins to trigger a job in the ansible-config-mgt pipeline. Since the ansible-config-mgt pipeline requires some parameters, we pass them using the 'parameters' value.(I provisioned servers for SIT,DEV,CI environments only)
     
- ![{91015C6F-22DE-41B3-B463-117129E50214} png](https://user-images.githubusercontent.com/76074379/120632015-6014be80-c41d-11eb-9fc6-6d82d5b57667.jpg)
+![{73E0A380-8DB1-4859-9B94-16D0C0DCD0A8} png](https://user-images.githubusercontent.com/76074379/120633085-969f0900-c41e-11eb-91df-49809554e025.jpg)
 
-## Step 3: Install and Configure SonarQube on Ubuntu 20.04 With PostgreSQL as Backend Database
+## Step 3: Install and Configure SonarQube on Ubuntu 20.04 With PostgreSQL as a Backend Database
     
 Software Quality - The degree to which a software component, system or process meets specified requirements based on user needs and expectations.
 
 Software Quality Gates - Quality gates are basically acceptance criteria which are usually presented as a set of predefined quality criteria that a software development project must meet in order to proceed from one stage of its lifecycle to the next one.
     
-We will make some Linux Kernel configuration changes to ensure optimal performance of the tool - we will increase vm.max_map_count, file discriptor and ulimit
+We will make some Linux Kernel configuration changes to ensure optimal performance of the tool - we will increase vm.max_map_count, file discriptor and ulimit(Check Sonarqube Documentation for details)
 
 ### Step 3.1: Tune Linux Kernel
  
@@ -640,7 +632,14 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
     sudo useradd -c "user to run SonarQube" -d /opt/sonarqube -g sonar sonar 
     sudo chown sonar:sonar /opt/sonarqube -R
     ```
-  - Open and edit SonarQube configuration file. Find and edit the following lines
+  - Open and edit SonarQube configuration file
+    
+    ```
+    sudo vim /opt/sonarqube/conf/sonar.properties
+    ```
+    
+    Then find and edit the following lines
+  
     ```
     sonar.jdbc.username=sonar
     sonar.jdbc.password=sonar
@@ -649,20 +648,46 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
     ```
     sonar.jdbc.url=jdbc:postgresql://localhost:5432/sonarqube
     ```
-  - Edit sonar script and set RUN_AS_USER=sonar
+  - enter the sonar script file. Find and set RUN_AS_USER to be equals to sonar
+    
+    ```
+    sudo nano /opt/sonarqube/bin/linux-x86-64/sonar.sh
+    ```
+    ```
+    # If specified, the Wrapper will be run as the specified user.
+
+    # IMPORTANT - Make sure that the user has the required privileges to write
+
+    #  the PID file and wrapper.log files.  Failure to be able to write the log
+
+    #  file will cause the Wrapper to exit without any way to write out an error
+
+    #  message.
+
+   # NOTE - This will set the user which is used to run the Wrapper as well as
+
+   #  the JVM and is not useful in situations where a privileged resource or
+
+   #  port needs to be allocated prior to the user being changed.
+
+  RUN_AS_USER=sonar
+    
+  ```
+    
   - Add sonar user to sudoers file
     - First set the user's password to something you can easily remember
       ```
       sudo passwd sonar
       ```
-    - Run the following command. 
+    - Then run the command to add sonar to sudo group
       ```
-      sudo visudo
+      sudo usermod -a -G sudo sonar
       ```
-    Input the th below line into file, save and exit
-      ```
-      sonar ALL=(ALL) NOPASSWD: ALL
-      ```
+    - To check if it has been added, run command
+    ```
+    groups sonar
+    ```
+    
   - Switch to the sonar user, switch to script directory and start the script
     ```
     su - sonar
@@ -719,9 +744,11 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
       sudo systemctl status sonar
       ```
 ### Step 3.5: Access Sonarqube
-- Access the SonarQube by going to http://<sonar-qube-ip>:9000, use **admin** as your username and password
-![](imgs/sonar.png)
-- Do not forget to open ports 9000 and 5432 on the security group.
+- Access the SonarQube by going to http://sonarqube-public-ip-address:9000, use **admin** as your username and password
+    
+ **NOTE**: Do not forget to open ports 9000 and 5432 on the security group.
+    
+![{C3EC02C7-4DFF-47E8-9C50-92BC0A873486} png](https://user-images.githubusercontent.com/76074379/120636060-06fb5980-c422-11eb-8199-eb54b6fbd3d0.jpg)
 
 ### Step 3.6: Configure SonarQube and Jenkins for Quality Gate
 - Install SonarQube plugin in Jenkins UI
