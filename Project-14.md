@@ -992,3 +992,5 @@ https://getcomposer.org/doc/00-intro.md#globally
 https://code.visualstudio.com/docs/setup/linux#_visual-studio-code-is-unable-to-watch-for-file-changes-in-this-large-workspace-error-enospc
     
 https://stackoverflow.com/questions/60269790/jenkins-set-a-parameter-defaultvalue-dynamically
+    
+https://docs.sonarqube.org/
