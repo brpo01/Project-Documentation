@@ -813,8 +813,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
   sonar.php.coverage.reportPaths=build/coverage/phploc.csv,coverage-report.xml
   sonar.php.tests.reportPath=reports/unitreport.xml,tests-report.xml
   ```
-![{F50A5205-FCD3-4D34-B091-6621B6A02BB6} png](https://user-images.githubusercontent.com/76074379/120863179-f987c180-c53e-11eb-9205-5e77be9449e0.jpg)
- 
+   
 For the SonarQube Quality Gate Stage - set the environment variable for the scannerHome use the same name used when you configured SonarQube Scanner from Jenkins Global Tool Configuration. If you remember, the name was "SonarQubeScanner". Then, within the steps use shell to run the scanner from bin directory.
 
 To further examine the configuration of the scanner tool on the Jenkins server - navigate into the tools directory
@@ -823,6 +822,8 @@ cd /var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQube
 ```
     
 List the content to see the scanner tool *sonar-scanner* with command "ls -latr". That is what we are calling in the pipeline script.
+
+![{FFEC106C-76B8-428A-8212-C42BEB762A31} png](https://user-images.githubusercontent.com/76074379/120870372-a0735a00-c54d-11eb-9b0a-138e1f1dc0ec.jpg)
 
  
 - Add the following build stage for Quality Gate
