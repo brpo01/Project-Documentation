@@ -944,10 +944,15 @@ Likewise, if a job is run in a non-specific branch, SonarQube Qualty Gate will b
 
 ## Step 5: Configure GitHub WebHook for Automatic Build of Pushed Code
     
+ To automatically run the pipeline when there is a code push, we will configure github webhook
+    
+![{EF655846-9CCB-4839-9E16-14CDB0D6EDCF} png](https://user-images.githubusercontent.com/76074379/120871215-e03b4100-c54f-11eb-8ea7-8764515bc96b.jpg)
+    
+![{CB0AEC6B-DEC9-4A77-8726-9F52FF310CEE} png](https://user-images.githubusercontent.com/76074379/120871251-f517d480-c54f-11eb-968b-5acff8520151.jpg)
 
 
 ## Step 6: Deploy to all Environments
-
+To deploy
 
 ## Credits
 
