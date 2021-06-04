@@ -515,13 +515,15 @@ On the sonarqube server, log into to the root user and run the following command
   ulimit -u 4096 
     ```
     
-
+![{A2358D67-5861-49C2-8B0C-1B83F79C4633} png](https://user-images.githubusercontent.com/76074379/120856947-67c78680-c535-11eb-9d29-a71280a5fe35.jpg)
+    
 Open the /etc/security/limits.conf file and append the following.
     
   ```
   sonarqube   -   nofile   65536
   sonarqube   -   nproc    4096
   ```
+    
 To enable persistence after reboot, open the /etc/sysctl.conf and append the following.
     
   ```
@@ -544,6 +546,7 @@ To enable persistence after reboot, open the /etc/sysctl.conf and append the fol
   sudo apt-get install openjdk-11-jdk -y
   sudo apt-get install openjdk-11-jre -y
   ```
+    
   - To set default JDK or switch to OpenJDK, run the command,
     ```
     sudo update-alternatives --config java
@@ -573,6 +576,9 @@ To enable persistence after reboot, open the /etc/sysctl.conf and append the fol
   sudo systemctl start postgresql
   sudo systemctl enable postgresql
   ```
+    
+  ![{279103CF-94CA-45ED-9D04-6C5EB63299CD} png](https://user-images.githubusercontent.com/76074379/120857993-fb4d8700-c536-11eb-898c-12c168ac6f11.jpg)
+    
 - Change the default password for postgres user (to any password you can easily remember)
   ```
   sudo passwd postgres
@@ -621,6 +627,8 @@ To enable persistence after reboot, open the /etc/sysctl.conf and append the fol
   sudo unzip sonarqube-7.9.3.zip -d /opt
   sudo mv /opt/sonarqube-7.9.3 /opt/sonarqube
   ```
+    
+   
 - Configure SonarQube
 Since Sonarqube cannot be run as root user, we have to create a **sonar** user to start the service with.
   - Create a group sonar
@@ -648,6 +656,9 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
     ```
     sonar.jdbc.url=jdbc:postgresql://localhost:5432/sonarqube
     ```
+    
+    ![{A5B4081C-7422-43C9-9102-C69DBD9C5CF0} png](https://user-images.githubusercontent.com/76074379/120858676-f9d08e80-c537-11eb-98f3-bfa3f3fbbe0b.jpg)
+    
   - enter the sonar script file. Find and set RUN_AS_USER to be equals to sonar
     
     ```
@@ -673,7 +684,8 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
   RUN_AS_USER=sonar
     
   ```
-    
+  ![{32173414-E985-4151-BE34-9CA30E8814BF} png](https://user-images.githubusercontent.com/76074379/120858990-6e0b3200-c538-11eb-8a61-86bd4e07b8db.jpg)
+  
   - Add sonar user to sudoers file
     - First set the user's password to something you can easily remember
       ```
@@ -704,6 +716,8 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
     ```
     tail /opt/sonarqube/logs/sonar.log
     ```
+    ![{644A82DE-3838-4422-A2F2-0B62BF0FC8CC} png](https://user-images.githubusercontent.com/76074379/120859288-da863100-c538-11eb-9e6c-fe692fa32575.jpg)
+    
   - Configure systemd to manage SonarQube service
     - Stop the sonar service
       ```
@@ -736,6 +750,9 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
       [Install]
       WantedBy=multi-user.target
       ```
+    
+    ![{19C5E1C9-C963-48EC-8FF7-A9D80C0C9D4F} png](https://user-images.githubusercontent.com/76074379/120859433-0c979300-c539-11eb-87e2-fab3ec118b72.jpg)
+    
       Save and exit
     - Use systemd to manage the service
       ```
@@ -743,6 +760,9 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
       sudo systemctl enable sonar
       sudo systemctl status sonar
       ```
+    
+    ![{08901825-4F64-47EA-B2CF-54F756E20A14} png](https://user-images.githubusercontent.com/76074379/120859515-2fc24280-c539-11eb-892f-73d91c7f60f7.jpg)
+    
 ### Step 3.5: Access Sonarqube
 - Access the SonarQube by going to http://sonarqube-public-ip-address:9000, use **admin** as your username and password
     
