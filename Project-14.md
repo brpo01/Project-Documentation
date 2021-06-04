@@ -796,22 +796,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
 
  ![{076ABE72-E8F8-42A0-B9D9-4E5D005E5C83} png](https://user-images.githubusercontent.com/76074379/120864534-35bc2180-c541-11eb-88d1-b76b07309866.jpg)
     
-- Add the following build stage for Quality Gate
-  ```
-  stage('SonarQube Quality Gate') {
-      environment {
-            scannerHome = tool 'SonarQubeScanner'
-        }
-        steps {
-            withSonarQubeEnv('sonarqube') {
-                sh "${scannerHome}/bin/sonar-scanner"
-            }
-
-        }
-    }
-  ```
- 
-  Save and run the pipeline to install the scanner. An error will be generated but it will also create "/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/conf/sonar-scanner.properties" directory
+ Save and run the pipeline to install the scanner. An error will be generated but it will also create "/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/conf/sonar-scanner.properties" directory
 
 - Edit sonar-scanner.properties file
   ```
@@ -828,6 +813,33 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
   sonar.php.tests.reportPath=reports/unitreport.xml,tests-report.xml
   ```
 ![{F50A5205-FCD3-4D34-B091-6621B6A02BB6} png](https://user-images.githubusercontent.com/76074379/120863179-f987c180-c53e-11eb-9205-5e77be9449e0.jpg)
+ 
+For the SonarQube Quality Gate Stage - set the environment variable for the scannerHome use the same name used when you configured SonarQube Scanner from Jenkins Global Tool Configuration. If you remember, the name was "SonarQubeScanner". Then, within the steps use shell to run the scanner from bin directory.
+
+To further examine the configuration of the scanner tool on the Jenkins server - navigate into the tools directory
+```
+cd /var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/bin. 
+```
+    
+List the content to see the scanner tool sonar-scanner with command "ls -latr". That is what we are calling in the pipeline script.
+
+ 
+- Add the following build stage for Quality Gate
+  ```
+  stage('SonarQube Quality Gate') {
+      environment {
+            scannerHome = tool 'SonarQubeScanner'
+        }
+        steps {
+            withSonarQubeEnv('sonarqube') {
+                sh "${scannerHome}/bin/sonar-scanner"
+            }
+
+        }
+    }
+  ```
+ 
+ 
     
 - Navigate to your php-todo dashboard on SonarQube UI
     
@@ -892,8 +904,23 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
 
 - Repeat the above steps to add more servers
     
-  Go to jenkins UI and run build, An error will be generated but it will also create "/home/ubuntu/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/conf/sonar-scanner.properties" directory
+Go to jenkins UI and run build, An error will be generated but it will also create "/home/ubuntu/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/conf/sonar-scanner.properties" directory
+    
+Open sonar-scanner.properties file
+```
+sudo vi sonar-scanner.properties
+```
+Add configuration related to php-todo project
+
+sonar.host.url=http://SonarQube-Server-IP-address:9000
+sonar.projectKey=P14-php-todo
+#----- Default source code encoding
+sonar.sourceEncoding=UTF-8
+sonar.php.exclusions=**/vendor/**
+sonar.php.coverage.reportPaths=build/coverage/phploc.csv,coverage-reports.xml
+sonar.php.tests.reportPath=reports/unitreport.xml,tests-report.xml
  
+
  ![{A4BE4E78-2F7D-4473-BCC3-C4BAAC875C02} png](https://user-images.githubusercontent.com/76074379/120866511-f4c60c00-c544-11eb-8239-0c26c4d39aa8.jpg)
 
 ## Step 5: Configure GitHub WebHook for Automatic Build of Pushed Code
