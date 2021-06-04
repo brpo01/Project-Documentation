@@ -940,9 +940,11 @@ Just like the master node, if a job is run in a specific branch e.g main, it wil
     
 Likewise, if a job is run in a non-specific branch, SonarQube Qualty Gate will be skipped and it will be successful
     
-
+![{E957D03C-A438-458A-BE75-4FB896EC0F97} png](https://user-images.githubusercontent.com/76074379/120871003-5a1efa80-c54f-11eb-8824-5e1ab504b7ff.jpg)
 
 ## Step 5: Configure GitHub WebHook for Automatic Build of Pushed Code
+    
+
 
 ## Step 6: Deploy to all Environments
 
