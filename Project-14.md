@@ -923,15 +923,24 @@ sonar.php.exclusions=**/vendor/**
 sonar.php.coverage.reportPaths=build/coverage/phploc.csv,coverage-report.xml
 sonar.php.tests.reportPath=reports/unitreport.xml,tests-report.xml
  ```
+![{F50A5205-FCD3-4D34-B091-6621B6A02BB6} png](https://user-images.githubusercontent.com/76074379/120870587-298a9100-c54e-11eb-9af5-e0fbc118e39c.jpg)
     
 To further examine the configuration of the scanner tool on the Jenkins slave node - navigate into the tools directory
 ```
 cd /home/ubuntu/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/bin. 
 ```
     
-List the content to see the scanner tool *sonar-scanner* with command "ls -latr". Just exactly like the Master node
+List the content to see the scanner tool *sonar-scanner* with command "ls -latr". the files in there are just exactly like the Master node
 
  ![{A4BE4E78-2F7D-4473-BCC3-C4BAAC875C02} png](https://user-images.githubusercontent.com/76074379/120866511-f4c60c00-c544-11eb-8239-0c26c4d39aa8.jpg)
+    
+Just like the master node, if a job is run in a specific branch e.g main, it will not pass Sonarqube Quality Gate test and it will be aborted
+    
+![{E284B53F-505F-49BF-9EDA-B7694742FB85} png](https://user-images.githubusercontent.com/76074379/120870820-cf3e0000-c54e-11eb-8292-e3dbd425643f.jpg)
+    
+Likewise, if a job is run in a non-specific branch, SonarQube Qualty Gate will be skipped and it will be successful
+    
+
 
 ## Step 5: Configure GitHub WebHook for Automatic Build of Pushed Code
 
