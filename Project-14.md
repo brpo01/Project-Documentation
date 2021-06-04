@@ -783,7 +783,9 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
 - Configure SonarQube webhook for Jenkins
   -  Navigate to Administration > Configuration > Webhooks > Create
   - Enter the name
-  - Enter URL as http://<jenkins-server-ip>:8080/sonar-webhook/
+  - Enter URL as http://jenkins-server-ip:8080/sonar-webhook/
+    
+ ![{CDCE0F5D-851E-4075-887E-7852390CD467} png](https://user-images.githubusercontent.com/76074379/120864242-c21a1480-c540-11eb-96a8-37cd0b810e74.jpg)   
 
 - Setup SonarScanner for Jenkins
   - In Jenkins UI, go to Manage Jenkins > Global Tool Configuration
@@ -792,6 +794,8 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
   - Check the 'Install automatically' box
   - Select 'Install from Maven Central'
 
+ ![{076ABE72-E8F8-42A0-B9D9-4E5D005E5C83} png](https://user-images.githubusercontent.com/76074379/120864534-35bc2180-c541-11eb-88d1-b76b07309866.jpg)
+    
 - Add the following build stage for Quality Gate
   ```
   stage('SonarQube Quality Gate') {
@@ -806,6 +810,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
         }
     }
   ```
+ 
   Save and run the pipeline to install the scanner. An error will be generated but it will also create "/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/conf/sonar-scanner.properties" directory
 
 - Edit sonar-scanner.properties file
