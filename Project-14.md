@@ -829,7 +829,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
 ![{DAC407E4-E6B1-40F9-AC94-ABA2CA47E04D} png](https://user-images.githubusercontent.com/76074379/120863448-6c913800-c53f-11eb-94b5-f4120b34f9a3.jpg)
 
 ### Step 3.7: Conditionally Deploy to Higher Environments
-- Include a **when** condition to execute the Quality Gate stage only when the running branch is develop, hotfix, release, main or master
+- Include a **when** condition to execute the Quality Gate stage only when the running branch is develop, hotfix, release, main
   ```
   when { branch pattern: "^develop*|^hotfix*|^release*|^main*", comparator: "REGEXP"}
   ```
@@ -856,11 +856,16 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
         }
     }
   ```
-  You should get the following when you run the pipeline:
+  You should get the following when you run the pipeline
+    
+ ![{FFCC0129-5A31-4983-B4C6-CFD98E4B7DF7} png](https://user-images.githubusercontent.com/76074379/120863575-a3674e00-c53f-11eb-85e6-3a3e43b7836b.jpg)
+    
+ ![{6AAA9451-E55E-4CBC-88C4-AC929E04B671} png](https://user-images.githubusercontent.com/76074379/120863778-fb9e5000-c53f-11eb-9ea5-5032cd1f3cd6.jpg)
   
   When running a non-specified branch, SonarQube Quality Gate stage is skipped
-  ![](imgs/branch-testing.png)
 
+![{3ACEA464-DA11-424E-9724-6FD0345CFAA7} png](https://user-images.githubusercontent.com/76074379/120863848-28eafe00-c540-11eb-8258-9c4bb595809c.jpg)
+    
 ## Step 4: Configure Jenkins slave servers
 - Spin up a new EC2 Instance(like the master(bastion) server)
   - Install all the neccessary software packages just like you did with the master(bastion) serve
