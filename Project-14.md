@@ -819,12 +819,14 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
   #----- Default source code encoding
   sonar.sourceEncoding=UTF-8
   sonar.php.exclusions=**/vendor/**
-  sonar.php.coverage.reportPaths=build/coverage/phploc.csv
-  sonar.php.tests.reportPath=build/coverage.xml
+  sonar.php.coverage.reportPaths=build/coverage/phploc.csv,coverage-reports.xml
+  sonar.php.tests.reportPath=reports/unitreport.xml,tests-report.xml
   ```
+![{F50A5205-FCD3-4D34-B091-6621B6A02BB6} png](https://user-images.githubusercontent.com/76074379/120863179-f987c180-c53e-11eb-9205-5e77be9449e0.jpg)
     
-- If everything was configured properly, you should see something like this: ![](imgs/endtoend.png)
-- Navigate to your php-todo dashboard on SonarQube UI ![](imgs/qualitygate.png)
+- Navigate to your php-todo dashboard on SonarQube UI
+    
+![{DAC407E4-E6B1-40F9-AC94-ABA2CA47E04D} png](https://user-images.githubusercontent.com/76074379/120863448-6c913800-c53f-11eb-94b5-f4120b34f9a3.jpg)
 
 ### Step 3.7: Conditionally Deploy to Higher Environments
 - Include a **when** condition to execute the Quality Gate stage only when the running branch is develop, hotfix, release, main or master
