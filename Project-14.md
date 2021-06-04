@@ -677,13 +677,13 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
 
     #  message.
 
-   # NOTE - This will set the user which is used to run the Wrapper as well as
+    # NOTE - This will set the user which is used to run the Wrapper as well as
 
-   #  the JVM and is not useful in situations where a privileged resource or
+    #  the JVM and is not useful in situations where a privileged resource or
 
-   #  port needs to be allocated prior to the user being changed.
+    #  port needs to be allocated prior to the user being changed.
 
-  RUN_AS_USER=sonar
+     RUN_AS_USER=sonar
     ```
 ![{32173414-E985-4151-BE34-9CA30E8814BF} png](https://user-images.githubusercontent.com/76074379/120858990-6e0b3200-c538-11eb-8a61-86bd4e07b8db.jpg)
   
