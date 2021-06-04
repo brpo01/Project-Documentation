@@ -861,6 +861,9 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
         }
     }
   ```
+    
+ ![{E9B408C7-2FF7-4E0D-834D-3334CD8DBBAE} png](https://user-images.githubusercontent.com/76074379/120865631-42417980-c543-11eb-9157-c79fb4f38b79.jpg)
+    
   You should get the following when you run the pipeline
     
  ![{FFCC0129-5A31-4983-B4C6-CFD98E4B7DF7} png](https://user-images.githubusercontent.com/76074379/120863575-a3674e00-c53f-11eb-85e6-3a3e43b7836b.jpg)
@@ -872,23 +875,26 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
 ![{3ACEA464-DA11-424E-9724-6FD0345CFAA7} png](https://user-images.githubusercontent.com/76074379/120863848-28eafe00-c540-11eb-8258-9c4bb595809c.jpg)
     
 ## Step 4: Configure Jenkins slave servers
-- Spin up a new EC2 Instance(like the master(bastion) server)
-  - Install all the neccessary software packages just like you did with the master(bastion) serve
+- Spin up a new EC2 Instance
+  - Install all the neccessary software packages just like you did with the master(bastion) server
   
 - On the main Jenkins server
   - Navigate to Manage Jenkins > Manage Nodes
   - Click New Node
   - Enter name of the node and click the 'Permanent Agent' button and click the OK button
-  - Fill in the remote root directory as /home/ubuntu/jenkins
-  - Set 'Host' value as the IP of the slave node
+  - Fill in the remote root directory as /home/ubuntu
+  - Set 'Host' value as the Public-IP of the slave node
   - For Launch Method, select Launch Agents via SSH
-  - Add SSH with username and private key credentials with username as ubuntu and private key as the private key you copied from the node
+  - Add SSH with username and private key credentials with username as ubuntu and private key as the private key of the master node
   - For Host Key Verification Strategy, select Manually trusted key validation strategy
   - Click Save
+  ![{E9D7B16C-16AC-43DB-9692-11E17B6D07A3} png](https://user-images.githubusercontent.com/76074379/120866205-4cb04300-c544-11eb-8899-0e23a55f2ea1.jpg)
 
 - Repeat the above steps to add more servers
     
-  
+  Go to jenkins UI and run build, An error will be generated but it will also create "/home/ubuntu/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/conf/sonar-scanner.properties" directory
+ 
+ ![{A4BE4E78-2F7D-4473-BCC3-C4BAAC875C02} png](https://user-images.githubusercontent.com/76074379/120866511-f4c60c00-c544-11eb-8239-0c26c4d39aa8.jpg)
 
 ## Step 5: Configure GitHub WebHook for Automatic Build of Pushed Code
 
