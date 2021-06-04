@@ -888,6 +888,10 @@ List the content to see the scanner tool *sonar-scanner* with command "ls -latr"
 
 ![{3ACEA464-DA11-424E-9724-6FD0345CFAA7} png](https://user-images.githubusercontent.com/76074379/120863848-28eafe00-c540-11eb-8258-9c4bb595809c.jpg)
     
+  The Sonarqube UI will look like this
+    
+   ![{3503223D-3AC1-4C9A-ADC6-A051D7C34F91} png](https://user-images.githubusercontent.com/76074379/120872601-08c53a00-c554-11eb-81be-9a1cc391d387.jpg)
+    
 ## Step 4: Configure Jenkins slave servers
 - Spin up a new EC2 Instance
   - Install all the neccessary software packages just like you did with the master(bastion) server
