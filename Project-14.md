@@ -396,7 +396,7 @@ http://<artifactory-server-ip>:8082/artifactory
       }
   ```
     
-  ![{5676EDD4-F9E3-452C-8BE3-F43492EE790A} png](https://user-images.githubusercontent.com/76074379/119847660-031a8500-bec0-11eb-910a-e692cdd00d75.jpg)
+![{5676EDD4-F9E3-452C-8BE3-F43492EE790A} png](https://user-images.githubusercontent.com/76074379/119847660-031a8500-bec0-11eb-910a-e692cdd00d75.jpg)
     
    
 ### Step 2.4: Code Quality Analysis
@@ -413,7 +413,7 @@ Most commonly used tool for php code quality analysis is **phploc**
     }
   ```
  
- ![{9C2C664A-094C-4DCF-8ABA-3D8A2B70619B} png](https://user-images.githubusercontent.com/76074379/119847999-483eb700-bec0-11eb-9e08-9124fd3eeb92.jpg)
+![{9C2C664A-094C-4DCF-8ABA-3D8A2B70619B} png](https://user-images.githubusercontent.com/76074379/119847999-483eb700-bec0-11eb-9e08-9124fd3eeb92.jpg)
     
     
 Plot the data using plot Jenkins plugin.
@@ -452,6 +452,7 @@ This plugin provides generic plotting (or graphing) capabilities in Jenkins. It 
             sh 'zip -qr ${WORKSPACE}/php-todo.zip ${WORKSPACE}/*'
     }
   ```
+    
 ![{B87A718F-1594-4C0E-A4C0-1BBA3E1A83A7} png](https://user-images.githubusercontent.com/76074379/119848671-dadf5600-bec0-11eb-8f87-090517fc9916.jpg)
     
     
@@ -577,7 +578,7 @@ To enable persistence after reboot, open the /etc/sysctl.conf and append the fol
   sudo systemctl enable postgresql
   ```
     
-  ![{279103CF-94CA-45ED-9D04-6C5EB63299CD} png](https://user-images.githubusercontent.com/76074379/120857993-fb4d8700-c536-11eb-898c-12c168ac6f11.jpg)
+![{279103CF-94CA-45ED-9D04-6C5EB63299CD} png](https://user-images.githubusercontent.com/76074379/120857993-fb4d8700-c536-11eb-898c-12c168ac6f11.jpg)
     
 - Change the default password for postgres user (to any password you can easily remember)
   ```
@@ -657,7 +658,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
     sonar.jdbc.url=jdbc:postgresql://localhost:5432/sonarqube
     ```
     
-    ![{A5B4081C-7422-43C9-9102-C69DBD9C5CF0} png](https://user-images.githubusercontent.com/76074379/120858676-f9d08e80-c537-11eb-98f3-bfa3f3fbbe0b.jpg)
+ ![{A5B4081C-7422-43C9-9102-C69DBD9C5CF0} png](https://user-images.githubusercontent.com/76074379/120858676-f9d08e80-c537-11eb-98f3-bfa3f3fbbe0b.jpg)
     
   - enter the sonar script file. Find and set RUN_AS_USER to be equals to sonar
     
@@ -684,7 +685,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
   RUN_AS_USER=sonar
     
   ```
-  ![{32173414-E985-4151-BE34-9CA30E8814BF} png](https://user-images.githubusercontent.com/76074379/120858990-6e0b3200-c538-11eb-8a61-86bd4e07b8db.jpg)
+![{32173414-E985-4151-BE34-9CA30E8814BF} png](https://user-images.githubusercontent.com/76074379/120858990-6e0b3200-c538-11eb-8a61-86bd4e07b8db.jpg)
   
   - Add sonar user to sudoers file
     - First set the user's password to something you can easily remember
@@ -716,7 +717,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
     ```
     tail /opt/sonarqube/logs/sonar.log
     ```
-    ![{644A82DE-3838-4422-A2F2-0B62BF0FC8CC} png](https://user-images.githubusercontent.com/76074379/120859288-da863100-c538-11eb-9e6c-fe692fa32575.jpg)
+![{644A82DE-3838-4422-A2F2-0B62BF0FC8CC} png](https://user-images.githubusercontent.com/76074379/120859288-da863100-c538-11eb-9e6c-fe692fa32575.jpg)
     
   - Configure systemd to manage SonarQube service
     - Stop the sonar service
@@ -751,7 +752,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
       WantedBy=multi-user.target
       ```
     
-    ![{19C5E1C9-C963-48EC-8FF7-A9D80C0C9D4F} png](https://user-images.githubusercontent.com/76074379/120859433-0c979300-c539-11eb-87e2-fab3ec118b72.jpg)
+ ![{19C5E1C9-C963-48EC-8FF7-A9D80C0C9D4F} png](https://user-images.githubusercontent.com/76074379/120859433-0c979300-c539-11eb-87e2-fab3ec118b72.jpg)
     
       Save and exit
     - Use systemd to manage the service
@@ -761,12 +762,12 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
       sudo systemctl status sonar
       ```
     
-    ![{08901825-4F64-47EA-B2CF-54F756E20A14} png](https://user-images.githubusercontent.com/76074379/120859515-2fc24280-c539-11eb-892f-73d91c7f60f7.jpg)
+![{08901825-4F64-47EA-B2CF-54F756E20A14} png](https://user-images.githubusercontent.com/76074379/120859515-2fc24280-c539-11eb-892f-73d91c7f60f7.jpg)
     
 ### Step 3.5: Access Sonarqube
 - Access the SonarQube by going to http://sonarqube-public-ip-address:9000, use **admin** as your username and password
     
- **NOTE**: Do not forget to open ports 9000 and 5432 on the security group.
+ **Note**: Do not forget to open ports 9000 and 5432 on the security group.
     
 ![{C3EC02C7-4DFF-47E8-9C50-92BC0A873486} png](https://user-images.githubusercontent.com/76074379/120636060-06fb5980-c422-11eb-8199-eb54b6fbd3d0.jpg)
 
