@@ -952,8 +952,19 @@ Likewise, if a job is run in a non-specific branch, SonarQube Qualty Gate will b
 
 
 ## Step 6: Deploy to all Environments
-To deploy
+To deploy to all environemnts, we will configure the jenkinsfile in the config-mgt-ansible folder in two key places.
+- We leave the *defaultValue* in parameters blank like this: **defaultValue: ''**
+- In the Execcute Ansible Stage, we will update the *inventory* like this: inventory: **'inventory/${inventory_file}'**
 
+![{8F1D653E-1870-46BB-B9D3-AEE3E2ACCA4D} png](https://user-images.githubusercontent.com/76074379/120872271-08786f00-c553-11eb-9242-a713cffed7e8.jpg)
+    
+![{5EECDC47-012C-46BB-A116-75704F1C1F66} png](https://user-images.githubusercontent.com/76074379/120872299-23e37a00-c553-11eb-8790-7172377cabd8.jpg)
+    
+    
+If everything goes well, the output will look like this. (I only provisioned servers for CI,DEV AND SIT environmnts)
+
+![{91015C6F-22DE-41B3-B463-117129E50214} png](https://user-images.githubusercontent.com/76074379/120872378-7755c800-c553-11eb-9fe1-3b19b045dcf0.jpg)
+    
 ## Credits
 
 https://www.jenkins.io/doc/book/blueocean/getting-started/
