@@ -385,7 +385,9 @@ http://<artifactory-server-ip>:8082/artifactory
         }
       }
     }
-    ```![{C5F61134-7A4F-4B9B-8352-E53FF0FF2751} png](https://user-images.githubusercontent.com/76074379/120869605-ae27e000-c54b-11eb-9756-31b88e5adc46.jpg)
+    ```
+    
+  ![{C5F61134-7A4F-4B9B-8352-E53FF0FF2751} png](https://user-images.githubusercontent.com/76074379/120869605-ae27e000-c54b-11eb-9756-31b88e5adc46.jpg)
 
 - Update Jenkinsfile to include unit tests
   ```
