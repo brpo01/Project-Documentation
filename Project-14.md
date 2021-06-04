@@ -333,7 +333,7 @@ http://<artifactory-server-ip>:8082/artifactory
     
   - Enter the Default Deployer Credentials(the username and the changed password of artifactory)
 
-   ![{760F9B42-2325-411C-AF6B-C8FD7E6C7922} png](https://user-images.githubusercontent.com/76074379/119845043-cbaad900-bebd-11eb-98cb-c49c07cfefdf.jpg)
+![{760F9B42-2325-411C-AF6B-C8FD7E6C7922} png](https://user-images.githubusercontent.com/76074379/119845043-cbaad900-bebd-11eb-98cb-c49c07cfefdf.jpg)
     
 ### Step 2.3: Integrate Artifactory repository with Jenkins
 - On Jenkins server, install mysql-client
@@ -386,7 +386,7 @@ http://<artifactory-server-ip>:8082/artifactory
       }
     }
     ```
-   ![{C5F61134-7A4F-4B9B-8352-E53FF0FF2751} png](https://user-images.githubusercontent.com/76074379/119847341-c058ad00-bebf-11eb-9354-6e291fbb92e8.jpg)
+![{C5F61134-7A4F-4B9B-8352-E53FF0FF2751} png](https://user-images.githubusercontent.com/76074379/119847341-c058ad00-bebf-11eb-9354-6e291fbb92e8.jpg)
 
 - Update Jenkinsfile to include unit tests
   ```
@@ -578,7 +578,8 @@ To enable persistence after reboot, open the /etc/sysctl.conf and append the fol
   sudo systemctl enable postgresql
   ```
     
-![{279103CF-94CA-45ED-9D04-6C5EB63299CD} png](https://user-images.githubusercontent.com/76074379/120857993-fb4d8700-c536-11eb-898c-12c168ac6f11.jpg)
+
+    ![{279103CF-94CA-45ED-9D04-6C5EB63299CD} png](https://user-images.githubusercontent.com/76074379/120857993-fb4d8700-c536-11eb-898c-12c168ac6f11.jpg)
     
 - Change the default password for postgres user (to any password you can easily remember)
   ```
@@ -683,8 +684,7 @@ Since Sonarqube cannot be run as root user, we have to create a **sonar** user t
    #  port needs to be allocated prior to the user being changed.
 
   RUN_AS_USER=sonar
-    
-  ```
+    ```
 ![{32173414-E985-4151-BE34-9CA30E8814BF} png](https://user-images.githubusercontent.com/76074379/120858990-6e0b3200-c538-11eb-8a61-86bd4e07b8db.jpg)
   
   - Add sonar user to sudoers file
