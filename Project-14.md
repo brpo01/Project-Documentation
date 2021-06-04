@@ -904,7 +904,7 @@ List the content to see the scanner tool *sonar-scanner* with command "ls -latr"
 
 - Repeat the above steps to add more servers
     
-Go to jenkins UI and run build, An error will be generated but it will also create *##/home/ubuntu/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/conf/sonar-scanner.properties##* directory
+Go to jenkins UI and run build, An error will be generated but it will also create */home/ubuntu/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/conf/sonar-scanner.properties* directory
     
 Open sonar-scanner.properties file
 ```
@@ -921,6 +921,13 @@ sonar.php.exclusions=**/vendor/**
 sonar.php.coverage.reportPaths=build/coverage/phploc.csv,coverage-report.xml
 sonar.php.tests.reportPath=reports/unitreport.xml,tests-report.xml
  ```
+    
+To further examine the configuration of the scanner tool on the Jenkins slave node - navigate into the tools directory
+```
+cd /home/ubuntu/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/bin. 
+```
+    
+List the content to see the scanner tool *sonar-scanner* with command "ls -latr". Just exactly like the Master node
 
  ![{A4BE4E78-2F7D-4473-BCC3-C4BAAC875C02} png](https://user-images.githubusercontent.com/76074379/120866511-f4c60c00-c544-11eb-8239-0c26c4d39aa8.jpg)
 
