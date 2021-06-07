@@ -509,13 +509,13 @@ We will make some Linux Kernel configuration changes to ensure optimal performan
 ### Step 3.1: Tune Linux Kernel
  
 On the sonarqube server, log into to the root user and run the following commands
-    ```
-      su
-  sysctl -w vm.max_map_count=262144
-  sysctl -w fs.file-max=65536
-  ulimit -n 65536
-  ulimit -u 4096 
-    ```
+```
+su
+sysctl -w vm.max_map_count=262144
+sysctl -w fs.file-max=65536
+ulimit -n 65536
+ulimit -u 4096
+```
     
 ![{A2358D67-5861-49C2-8B0C-1B83F79C4633} png](https://user-images.githubusercontent.com/76074379/120856947-67c78680-c535-11eb-9d29-a71280a5fe35.jpg)
     
