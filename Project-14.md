@@ -320,7 +320,7 @@ npm install -g typescript
 Install Tthe following plugins on Jenkins UI
   - Plot plugin: to display tests reports and code coverage information
   - Artifactory plugin: to easily deploy artifacts to Artifactory server
-  - Go to the artifactory URL(http://<artifactory-server-ip>:8082) and create a local generic repository named *php-todo*(Default username and password is admin. After logging in, change the password)
+  - Go to the artifactory URL(http://artifactory-server-ip:8082) and create a local generic repository named *php-todo*(Default username and password is admin. After logging in, change the password)
 Configure Artifactory in Jenkins UI
   - Click Manage Jenkins, click Configure System
   - Scroll down to JFrog, click Add Artifactory Server
@@ -491,10 +491,10 @@ This plugin provides generic plotting (or graphing) capabilities in Jenkins. It 
   }
   ```
 ```
-**Note**: The stage above will not deploy to "dev" environment if you do not specify it in the String ParameterValue at the beginning of the script. The "defaultValue" should be changed from "${inventory_file}" to "dev". That way the application will be automatically deployed to Dev environment.
+**Note**: The stage above will not deploy to "dev" environment if you do not specify it in the String ParameterValue at the beginning of the script. The "defaultValue" should be changed from "${inventory_file}" to "dev". That way, the application will be automatically deployed to Dev environment.
 ```
     
- This build job tells Jenkins to trigger a job in the ansible-config-mgt pipeline. Since the ansible-config-mgt pipeline requires some parameters, we pass them using the 'parameters' value.(I provisioned servers for SIT,DEV,CI environments only)
+ This build job tells Jenkins to trigger a job in the ansible-config-mgt pipeline. Since the ansible-config-mgt pipeline requires some parameters, we parse them using the 'parameters' value.(I provisioned servers for SIT,DEV,CI environments only)
     
 ![{73E0A380-8DB1-4859-9B94-16D0C0DCD0A8} png](https://user-images.githubusercontent.com/76074379/120633085-969f0900-c41e-11eb-91df-49809554e025.jpg)
 
