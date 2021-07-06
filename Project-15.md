@@ -32,9 +32,9 @@
 - Under 'Provision certificates' click Get started
 - Click Request a certificate
 - Enter the domain name you registered (<*domain-name>.com*).Also enter additional domain names:
-   - *tooling.<*domain-name>.com*
-   - *www.<*domain-name>.com*).
-- Click next
+   - tooling.<*domain-name>.com*
+   - www.<*domain-name>.com*
+- Click Next
 - Select DNS validation and click Next
 - Tag the certificate, click Review then confirm and request
 - Click Continue
@@ -417,28 +417,28 @@ Repeat above steps for Wordpress
 - The tooling config file should contain the following settings: 
   ```
   server {
-    server_name tooling.domain.com; # tooling site
+    server_name tooling.domain.com;
     location ~ { # case-sensitive regular expression match
 		include /etc/nginx/mime.types;
 	    proxy_redirect      off;
 	    proxy_set_header    X-Real-IP $remote_addr;
 	    proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header    Host $http_host;
-		proxy_pass http://tooling-ALB-DNS; # aws-lb
+		proxy_pass http://tooling-ALB-DNS;
 	  }
   }
   ```
   The wordpress config file:
   ```
   server {
-    server_name domain.com www.domain.com; # tooling site
+    server_name domain.com www.domain.com; 
     location ~ { # case-sensitive regular expression match
 		include /etc/nginx/mime.types;
 	    proxy_redirect      off;
 	    proxy_set_header    X-Real-IP $remote_addr;
 	    proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header    Host $http_host;
-		proxy_pass http://wordpress-ALB-DNS; # aws-lb
+		proxy_pass http://wordpress-ALB-DNS;
 	  }
   }
   ```
@@ -461,7 +461,7 @@ apachectl -M | grep ssl
 sudo systemctl restart httpd
 ```
 
-- I was getting a 502 Bad Gateway error, to solve this, I checked the logs for my nginx instance (I had to SSH into it) and noticed it was returning a permission denied error, so I disabled SELinux in by opening /etc/sysconfig/selinux by setting the SELinux to disabled. I also disabled SElinux on the webservers.
+- I was getting a 502 Bad Gateway error, to solve this, I checked the logs for my nginx instance (I had to SSH into it) and noticed it was returning a permission denied error, so I disabled SELinux in by opening /etc/sysconfig/selinux and setting the SELinux to disabled. I also disabled SElinux on the web servers.
 
 # Credits
 
