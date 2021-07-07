@@ -1,4 +1,4 @@
-# Experience Continuous Integration with Jenkins | Ansible | Artifactory | SonarQube | PHP
+# Continuous Integration with Jenkins | Ansible | Artifactory | SonarQube | PHP
 
 ## Step 1: Simulating a typical CI/CD Pipeline for a PHP Based application
     This is a continuation of Project 11 through Project 13.
