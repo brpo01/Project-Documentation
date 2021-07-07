@@ -298,7 +298,7 @@ To deploy to other environments, we have to use parameters
   ```
  After getting the path to the file, enter the file and paste in:
   ```
-  xdebug.mode=coverage
+  xdebug.mode = coverage
 
 ```
 - Install nodejs and npm
@@ -316,9 +316,9 @@ su
 npm install -g typescript
 
 ```
-- Restart php-fpm
+- Restart php7.4-fpm
 ```
-sudo systemmctl restart php-fpm
+sudo systemmctl restart php7.4-fpm
 ```
 
 Install Tthe following plugins on Jenkins UI
