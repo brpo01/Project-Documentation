@@ -316,6 +316,10 @@ su
 npm install -g typescript
 
 ```
+- Restart php-fpm
+```
+sudo systemmctl restart php-fpm
+```
 
 Install Tthe following plugins on Jenkins UI
   - Plot plugin: to display tests reports and code coverage information
