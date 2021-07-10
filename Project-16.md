@@ -11,3 +11,11 @@
        - Install and configure Python SDK. Click [here](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html#installation)
        - For easier authentication configuration - use AWS CLI with *aws configure* command. For guidance or help,run command ***aws configure help***
        - Install chocolatey. Click [here](https://docs.chocolatey.org/en-us/choco/setup)
+       - Install Terraform.
+         ```
+         choco install terraform
+         ```
+- Create an s3 bucket using the AWS CLI. Follow Bucket naming rules. For more info, click [here](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html)
+  ```
+  aws s3 mb s3://<bucket-name>
+  ```
