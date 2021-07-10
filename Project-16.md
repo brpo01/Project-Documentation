@@ -9,5 +9,5 @@
        - Run Powershell, cmd or Gitbash as Administrator
        - Install aws CLI. Click [here](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-windows.html)
        - Install and configure Python SDK. Click [here](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html#installation)
-       - For easier authentication configuration - use AWS CLI with *aws configure* command. For guidance or help,run command **aws configure help**
+       - For easier authentication configuration - use AWS CLI with *aws configure* command. For guidance or help,run command *aws configure help*
        - Install chocolatey. Click [here](https://docs.chocolatey.org/en-us/choco/setup)
