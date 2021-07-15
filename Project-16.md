@@ -74,14 +74,11 @@ It is a json format that stores the ID of the user, what operation he/she is doi
 
 ## Subnets resource section
 We need 6 subnets
+- 2 public(internet-facing) subnet for nginx servers
+- 2 private for web servers
+- 2 private for the data layer
 
-2 public facing
-
-2 private for webservers
-
-2 private for the data layer
-
-Let us create the first 2 public facing subnets. Add this to the *main.tf* file.
+Let us create the first 2 public facing subnets. Add this to the ***main.tf*** file.
 
 ```
 # Create public subnets1
