@@ -112,4 +112,9 @@ Now let's improve this by refactoring the code.
 
 First, destroy the current infrastructure. Since we are still in development, this is totally fine. Otherwise, DO NOT DESTROY an infrastructure that has been deployed to production.
 
-To destroy, run ***terraform destroy*** command, and type ***yes*** after evaluating the plan.
+To destroy, run ***terraform destroy*** command, and type ***yes*** after evaluating the plan. You can also run this command so you do not have to type ***yes***
+```
+terraform destroy -auto-approve
+```
+
+
