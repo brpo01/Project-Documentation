@@ -125,7 +125,7 @@ terraform destroy -auto-approve
     - Starting with the provider block, declare a variable named region, give it a default value, and update the provider section by referring to the declared variable.
     ```
     variable "region" {
-        default = "eu-central-1"
+        default = "us-west-1"
     }
 
     provider "aws" {
@@ -311,7 +311,7 @@ state = "available"
 }
 
 variable "region" {
-      default = "eu-central-1"
+      default = "us-west-1"
 }
 
 variable "vpc_cidr" {
@@ -366,14 +366,14 @@ resource "aws_subnet" "public" {
 ***Note:*** You should try changing the value of *preferred_number_of_public_subnets* variable to null and notice how many subnets get created.
 
 ## Introducing variables.tf & terraform.tfvars
-Instead of havng a long lisf of variables in main.tf file, we can actually make our code a lot more readable and better structured by moving out some parts of the configuration content to other files.
+Instead of havng a long list of variables in *main.tf* file, we can actually make our code a lot more readable and better structured by moving out some parts of the configuration content to other files.
 
 - We will put all variable declarations in a separate file
 - And provide non-default values to each of them
 
-    - Create a new file and name it variables.tf
+    - Create a new file and name it *variables.tf*
     - Copy all the variable declarations into the new file.
-    - Create another file, name it terraform.tfvars
+    - Create another file, name it *terraform.tfvars*
     - Set values for each of the variables.
  
  **main.tf**
@@ -410,7 +410,7 @@ resource "aws_subnet" "public" {
 **variables.tf**
 ```
 variable "region" {
-      default = "eu-central-1"
+      default = "us-west-1"
 }
 
 variable "vpc_cidr" {
@@ -440,7 +440,7 @@ variable "enable_classiclink_dns_support" {
 
 **terraform.tfvars**
 ```
-region = "eu-central-1"
+region = "us-west-1"
 
 vpc_cidr = "172.16.0.0/16" 
 
