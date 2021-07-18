@@ -474,3 +474,6 @@ Run ***terraform plan*** and ***terraform apply -auto-approve*** and ensure ever
 
 https://darey.io/docs/project-16-introduction/
 
+https://docs.chocolatey.org/en-us/choco/setup
+
+https://github.com/aws/aws-cli/issues/3567
