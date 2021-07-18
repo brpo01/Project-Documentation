@@ -1,8 +1,14 @@
 
 # Automate Infrastructure With IaC using Terraform
+
+![tooling_project_15](https://user-images.githubusercontent.com/76074379/126079856-ac2b5dea-45d0-4f1f-85fa-54284a91a5de.png)
+
 ## Prerequisites before writing Terraform code
 
 - On the console, create an IAM user, name it **terraform** (*ensure that the user has only programatic access to your AWS account*) and grant this user AdministratorAccess permissions.
+
+![{87B177FE-6AC9-41F2-85E5-9817FE59C4A6} png](https://user-images.githubusercontent.com/76074379/126079890-7ece2fd8-02c8-4b04-b874-a1a4e8c64a10.jpg)
+
 - Copy the secret access key and access key ID. Save them in a notepad temporarily.
 - Configure programmatic access from your workstation to connect to AWS using the access keys copied above and a Python SDK (boto3). You must have Python 3.6 or higher on your       workstation.
 
@@ -23,6 +29,7 @@
   ```
   aws s3 mb s3://<bucket-name>
   ```
+  ![{820CE5EC-E630-471E-B68D-794522E29B6D} png](https://user-images.githubusercontent.com/76074379/126080150-189345d7-8d75-45b4-95e4-6b584a1f093f.jpg)
 
 ## The VPC | Subnets | Security Groups
 Let us create a directory structure.
@@ -101,7 +108,13 @@ Let us create the first 2 public facing subnets. Add this to the ***main.tf*** f
 ```
 We are creating 2 subnets, therefore declaring 2 resource blocks for each of the subnets.
 We are using the vpc_id argument to interpolate the value of the VPC id by setting it to aws_vpc.main.id. That way, terraform knows which VPC to create the subnet.
-Run terraform plan and terraform apply
+Run *terraform plan* and *terraform apply -auto-approve*
+
+![{47AA2431-3056-4DDD-BF7A-7206BDD9970C} png](https://user-images.githubusercontent.com/76074379/126080568-e111c5bd-d707-4f93-85e6-c2279d7da61b.jpg)
+
+![{A588F2CD-3219-4C04-90AA-32AC12B61E31} png](https://user-images.githubusercontent.com/76074379/126080294-99469a77-d97d-468a-b892-d128f22e5c03.jpg)
+
+
 
 #### Observations:
 
@@ -468,7 +481,7 @@ You should also have this file structure in the PBL folder.
 
 Run ***terraform plan*** and ***terraform apply -auto-approve*** and ensure everything works.
 
-
+![{60B91E88-B7FA-4933-BF89-89F584DF9B2D} png](https://user-images.githubusercontent.com/76074379/126080909-9e3d6395-f4e1-41e1-8117-d3c49a36b29f.jpg)
 
 ## Credits
 
