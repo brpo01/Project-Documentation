@@ -7,7 +7,7 @@
 
 - On the console, create an IAM user, name it **terraform** (*ensure that the user has only programatic access to your AWS account*) and grant this user AdministratorAccess permissions.
 
-![{87B177FE-6AC9-41F2-85E5-9817FE59C4A6} png](https://user-images.githubusercontent.com/76074379/126079890-7ece2fd8-02c8-4b04-b874-a1a4e8c64a10.jpg)
+![Inked{87B177FE-6AC9-41F2-85E5-9817FE59C4A6} png_LI](https://user-images.githubusercontent.com/76074379/126080985-a8b289ed-0539-4d6e-a486-26a76ebf69f8.jpg)
 
 - Copy the secret access key and access key ID. Save them in a notepad temporarily.
 - Configure programmatic access from your workstation to connect to AWS using the access keys copied above and a Python SDK (boto3). You must have Python 3.6 or higher on your       workstation.
