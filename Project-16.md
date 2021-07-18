@@ -251,10 +251,15 @@ Its parameters are *cidrsubnet(prefix, newbits, netnum)*
 You can experiment how this works by entering the **terraform console** and keep changing the figures to see the output.
 
 On the terminal, run ***terraform console***
+
 type *cidrsubnet("172.16.0.0/16", 4, 0)*
+
 Hit *enter*
+
 See the output
+
 Keep changing the numbers and see what happens.
+
 To get out of the console, type *exit*
 
 ### The final problem to solve is removing hard coded *count* value.
