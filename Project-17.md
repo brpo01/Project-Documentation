@@ -372,7 +372,7 @@ Add the following code to a new file named ***security.tf***
     ```
     resource "aws_iam_instance_profile" "ip" {
         name = "aws_instance_profile_test"
-        role =  aws_iam_role.test_role.name
+        role =  aws_iam_role.ec2_instance_role.name
     }
     ```
 
@@ -390,9 +390,9 @@ to generate yours just run the following command: `ssh-keygen` and just follow t
 
 To Upload your public key to aws keypair add the following code to `keypair.tf` file
 ```
-resource "aws_key_pair" "Dare" {
-  key_name   = "Dare"
-  public_key = file("C:/Users/Dare/.ssh/id_rsa.pub")
+resource "aws_key_pair" "<name of folder>" {
+  key_name   = "<name of folder>"
+  public_key = file("C:/Users/<name of folder>/.ssh/id_rsa.pub")
 }
 ``` 
 ### Create EC2 instances
@@ -443,7 +443,7 @@ resource "aws_security_group" "bastion_sg" {
     }
 }
 ```
-Add the EC2 configuration to `ec2.tf` file as follows:
+Create `ec2.tf` file and add the EC2 configuration to the file as follows:
 ```
 resource "aws_instance" "bastion" {
     count  = var.preferred_number_of_public_subnets == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_public_subnets   
