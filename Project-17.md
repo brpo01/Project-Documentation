@@ -338,10 +338,9 @@ Add the following code to a new file named ***security.tf***
     This is where we need to define the required policy (i.e. permissions) according to the necessities. For example, allowing the IAM role to describe the ec2
     ```
     resource "aws_iam_policy" "policy" {
-        name        = "test-policy"
-        description = "A test policy"
-        policy = <<EOF
-        {
+    name        = "test-policy"
+    description = "A test policy"
+    policy = jsonencode({
         "Version": "2012-10-17",
         "Statement": [
             {
@@ -352,12 +351,11 @@ Add the following code to a new file named ***security.tf***
             "Resource": "*"
             }
         ]
-        }
-        EOF
-        tags = {
-            Name = "aws assume policy"
-            Environment = var.environment
-        }
+    })
+    tags = {
+        Name = "aws assume policy"
+        Environment = var.environment
+       }
     }
     ```
 3. Attach thie Policy to this role 
