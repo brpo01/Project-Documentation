@@ -28,8 +28,10 @@ As we did before with public subnet we are doing the same with private subnet
       default = null
 }
 ```
-- Added the value to `terraform.tfvars`: 
-`preferred_number_of_private_subnets_A = 2`
+- Update `terraform.tfvars` with the value below: 
+```
+preferred_number_of_private_subnets_A = 2
+```
 
 ---
 
@@ -45,8 +47,13 @@ tags = merge(
   )
 }
 ```
+The `format` function produces a string by formatting a number of other values according to a specification string. It is similar to the **printf** function in C, and other similar functions in other programming languages.
+`format(spec, values...)`.
+
+We create everything with `multi AZ` so we need to differentiate between them. This will help us to create good tagging sting by adding for example the count of the resource.
+
 ---
-Update your private subnet resource to be as the following 
+Update your private subnet resource to be as below
 
 ```
 resource "aws_subnet" "private_A" {
@@ -75,7 +82,7 @@ variable "additional_tags" {
 }
 ```
 
-Full `main.tf` file after adding tags will be as following
+Our full `main.tf` file after adding tags will be as below
 ```
 # Get list of availability zones
 data "aws_availability_zones" "available" {
@@ -136,31 +143,21 @@ Check the AWS Console, we will find that aws has been updated with new subnets
 
 
 ---
-## Introducing `format` Function 
-`format` produces a string by formatting a number of other values according to a specification string. It is similar to the printf function in C, and other similar functions in other programming languages.
-`format(spec, values...)`.
 
-We create everything with `multi AZ` so we need to differentiate between them. This will help us to create good tagging sting by adding for example the count of the resource.
+## Replicate what did we do for the other private subnet 
+- Make sure to update `variables.tf` file and `terraform.tfvars` file and then add the code below to `main.tf`
 ```
-tags = {
-    Name        =  format("PrivateSubnet-%s", count.index)
-    Environment = var.environment
-  }
-  ```
-
-
-## Replicate What did we do for the other private subnet 
-- make sure to update `variables.tf` file and `terraform.tfvars` file and then add the following code to `main.tf`
-```
-resource "aws_subnet" "private_2" {
-  count = var.preferred_number_of_private_subnets_2 == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_2
+resource "aws_subnet" "private_B" {
+  count = var.preferred_number_of_private_subnets_B == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_B
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr, 4 , count.index + 7)
   availability_zone = data.aws_availability_zones.available.names[count.index]
-  tags = {
-    Name =  format("PrivateSubnet2-%s", count.index )
-    Environment = var.environment
-  }
+  tags = merge(
+    var.additional_tags,
+    {
+      Name = format("PrivateSubnetB-%s", count.index)
+    } 
+  )
 }
 ```
 ---
