@@ -161,22 +161,24 @@ resource "aws_subnet" "private_B" {
 }
 ```
 ---
-**NOTE:** The main aim of using terraform of using terraforn is to convert our infrastructure to code and this gives us the opportunity to organize our resources and one of the best practices that terraform gives. <b>It gives us the power to organize our resources in seprate files.</b>
+**NOTE:** The main aim of using terraform is to convert our infrastructure to code and this gives us the opportunity to organize our resources and one of the best practices that terraform gives. <b>It gives us the power to organize our resources in seprate files.</b>
 
 ---
 
 ## Create internet gateway
-- create a file called `internet_gateway.tf` and the follwoing code to it 
+- create a file called `internet_gateway.tf` and add the code below
 ```
 resource "aws_internet_gateway" "ig" {
   vpc_id = aws_vpc.main.id
-  tags = {
-    Name        = format("%s-%s!",aws_vpc.main.id,"IG")
-    Environment = var.environment
-  }
+  tags = merge(
+    var.additional_tags,
+    {
+      Name = format("%s-%s!", aws_vpc.main.id,"IG")
+    } 
+  )
 }
 ```
-## Create aws Natgateway
+## Create an Elastic IP(EIP) and AWS NATgateway and allocate the EIP to the NATgateway
 create a new file called `natgateway.tf` and the following code to it 
 ```
 resource "aws_eip" "nat_eip" {
@@ -200,7 +202,15 @@ resource "aws_nat_gateway" "nat" {
   }
 }
 ```
-## Crearte aws routes 
+
+**NOTE**: As we can see in the code snippet above, we included a new variable called *Environment* in the tag block. So we will have to define that variable in the ***variable.tf*** file. Add the code below
+```
+variable "environment" {
+  default = "for-private-subnets"
+}
+```
+
+## Create AWS Routes 
 ### Create aws routes for public subnet
 Create a file called `route_tables.tf` add the following code to it 
 
@@ -228,51 +238,51 @@ resource "aws_route_table_association" "public" {
 
 ```
 ### Create aws routes for first private subnet
-add to the same file `route_tables.tf` add the following code to it 
+Add to the same file `route_tables.tf` . Add the following code to it 
 ```
-resource "aws_route_table" "private" {
-  count = var.preferred_number_of_private_subnets_2 == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_2
+resource "aws_route_table" "private_A" {
+  count = var.preferred_number_of_private_subnets_A == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_A
   vpc_id = aws_vpc.main.id
     tags = {
-    Name        =  format("Private-RT, %s!",var.environment)
+    Name        =  format("PrivateA-RT, %s!",var.environment)
     Environment = var.environment
   }
 }
 
-resource "aws_route" "private" {
-  count = var.preferred_number_of_private_subnets_2 == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_2
+resource "aws_route" "private_A" {
+  count = var.preferred_number_of_private_subnets_A == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_A
   route_table_id         = aws_route_table.private[count.index].id
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = aws_nat_gateway.nat[count.index].id
 }
 
-resource "aws_route_table_association" "private" {
-  count = var.preferred_number_of_private_subnets_2 == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_2
+resource "aws_route_table_association" "private_A" {
+  count = var.preferred_number_of_private_subnets_A == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_A
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private[count.index].id
 }
 ```  
 ### Create aws routes for second private subnet
-add to the same file `route_tables.tf` add the following code to it 
+Add to the same file `route_tables.tf` . Add the following code to it 
 ```
-resource "aws_route_table" "private_2" {
-  count = var.preferred_number_of_private_subnets_1 == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_1
+resource "aws_route_table" "private_B" {
+  count = var.preferred_number_of_private_subnets_B == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_B
   vpc_id = aws_vpc.main.id
     tags = {
-    Name        =  format("private_2-RT, %s!",var.environment)
+    Name        =  format("privateB-RT, %s!",var.environment)
     Environment = var.environment
   }
 }
 
-resource "aws_route" "private_2" {
-  count = var.preferred_number_of_private_subnets_1 == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_1
+resource "aws_route" "private_B" {
+  count = var.preferred_number_of_private_subnets_B == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_B
   route_table_id         = aws_route_table.private_2[count.index].id
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = aws_nat_gateway.nat[count.index].id
 }
 
-resource "aws_route_table_association" "private_2" {
-  count = var.preferred_number_of_private_subnets_1 == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_1
+resource "aws_route_table_association" "private_B" {
+  count = var.preferred_number_of_private_subnets_B == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_B
   subnet_id      = aws_subnet.private_2[count.index].id
   route_table_id = aws_route_table.private[count.index].id
 }
@@ -286,7 +296,9 @@ Now if you did `terraform plan` and `terraform apply` it will add the following 
 - 2 EIPS
 - 6 routetables
 
-All of them are tagged resources as we set in `format` function 
+All of them are tagged resources as we set in `format` function.
+
+You may check AWS Console to confirm
 
 ---
 ## Introducing Backend on S3 
