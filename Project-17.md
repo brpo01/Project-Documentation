@@ -623,7 +623,19 @@ resource "aws_security_group_rule" "outbound_all-asg" {
   cidr_blocks       = ["0.0.0.0/0"]
 }
 ```
+**NOTE**: Before we create a new terraform file that will house our code for Autoscaling Group, we need to create a userdata file that we will reference in the terraform file to be created. We create an *sh* file and input our user-data script.
 
+
+Create an *userdata.sh* file and paste the script below
+```
+<<EOF
+#! /bin/bash
+yum -y install httpd
+echo "Hello, from Terraform" > /var/www/html/index.html
+systemctl start httpd
+systemctl enable httpd
+EOF
+```
 2. we need to create the lunch configuration of this asg in `asg.tf` .  # Ask the students to refactor this code to use Launch templates.
 
 ```
@@ -632,20 +644,14 @@ resource "aws_launch_configuration" "my-test-launch-config" {
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.my-asg-sg.id]
 
-  user_data = <<-EOF
-              #!/bin/bash
-              yum -y install httpd
-              echo "Hello, from Terraform" > /var/www/html/index.html
-              service httpd start
-              chkconfig httpd on
-              EOF
+  user_data = filebase64("userdata.sh")
 
   lifecycle {
     create_before_destroy = true
   }
 }
 ```
-3. Lets create the ASG itself in `asg.tf`
+3. Now let us create the ASG for both public and private servers in `asg.tf`
 ```
 resource "aws_autoscaling_group" "public_asg" {
   launch_configuration = aws_launch_configuration.my-test-launch-config.name
@@ -665,15 +671,47 @@ resource "aws_autoscaling_group" "public_asg" {
     propagate_at_launch = true
   }
 }
+
+resource "aws_autoscaling_group" "privateA_asg" {
+  launch_configuration = aws_launch_configuration.my-test-launch-config.name
+  vpc_zone_identifier  = [
+    aws_subnet.private_A[0].id,
+    aws_subnet.private_A[1].id
+  ]
+  target_group_arns    = [aws_lb_target_group.my-target-group.arn]
+  health_check_type    = "EC2"
+  min_size = 2
+  max_size = 10
+
+  tag {
+    key                 = "Name"
+    value               = "private_asg"
+    propagate_at_launch = true
+  }
+}
+
+resource "aws_autoscaling_group" "privateB_asg" {
+  launch_configuration = aws_launch_configuration.my-test-launch-config.name
+  vpc_zone_identifier  = [
+    aws_subnet.private_B[0].id,
+    aws_subnet.private_B[1].id
+  ]
+  target_group_arns    = [aws_lb_target_group.my-target-group.arn]
+  health_check_type    = "EC2"
+  min_size = 2
+  max_size = 10
+
+  tag {
+    key                 = "Name"
+    value               = "private_asg"
+    propagate_at_launch = true
+  }
+}
 ```
 
+
+
 ## Repeat all of the creation of EC2, ALB, ASG for private subnet
-
-As per our architecture we need to create the following resources inside the private subnet:
-
-1. 2 Ec2s with security groups
-2. ALB 
-3. Auto Scaling Group
 
 ---
 **Note:** 
