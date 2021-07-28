@@ -301,116 +301,19 @@ All of them are tagged resources as we set in `format` function.
 You may check AWS Console to confirm
 
 ---
-## Introducing Backend on S3 
-Each Terraform configuration can specify a backend, which defines where and how operations are performed, where state snapshots are stored, etc.
 
-- If you are still learning how to use Terraform, we recommend using the default `local backend`, which requires no configuration.
+##  Identity and Access Management 
+We want to pass an IAM role to our EC2s to give them access on some specic resources so will need to do the following: 
 
-- If you and your team are using Terraform to manage meaningful infrastructure, you will need to create terraform backend to save your state file at the cloud 
-
-Add the foolowing configs to a file called `backend.tf`
-1. We need to provision S3 to save our statefile there 
-```
-resource "aws_s3_bucket" "terraform_state" {
-  bucket = "terraform-state-test-lab"
-  # Enable versioning so we can see the full revision history of our
-  # state files
-  versioning {
-    enabled = true
-  }
-  # Enable server-side encryption by default
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
-}
-```
-2. We need to provision Dynamo DB to check state locking and consistency checking
-```
-resource "aws_dynamodb_table" "terraform_locks" {
-  name         = "terraform-locks"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "LockID"
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
-}
-```
-3. Do `terraform apply` to provision resources 
-4. Create the Backend block
-```
-terraform {
-  backend "s3" {
-    bucket         = "terraform-state-test-lab"
-    key            = "global/s3/terraform.tfstate"
-    region         = "eu-central-1"
-    dynamodb_table = "terraform-locks"
-    encrypt        = true
-  }
-}
-```
-5. Do a terraform init to initialize the new backend 
-
-    This will initialize our new backend after confirming by typing `yes` 
-
-6. Test it now 
-
-    Before doing anything if you opened aws now to see what heppened you shoud be able to see the following:
-    - tfstatefile is now inside the S3 bucket 
-    - dynamodb table which we create has an entry includes state file status 
-    - run now `terraform plan` and quickly go and watch what happened to dynamodb table 
-      and how it is locked 
-    - wait until `terraform plan` is finished and refresh dynamo db table, you be able to see that is back to their state 
-
-
-### conclusion
-
-Terraform will automatically pull the latest state from this S3 bucket before running a command, and automatically push the latest state to the S3 bucket after running a command. To see this in action, add the following output variables:
-```
-output "s3_bucket_arn" {
-  value       = aws_s3_bucket.terraform_state.arn
-  description = "The ARN of the S3 bucket"
-}
-output "dynamodb_table_name" {
-  value       = aws_dynamodb_table.terraform_locks.name
-  description = "The name of the DynamoDB table"
-}
-```
-and then do `terraform apply`
-
-Now, head over to the S3 console again, refresh the page, and click the gray “Show” button next to “Versions.” You should now see several versions of your terraform.tfstate file in the S3 bucket:
-
----
-
-**Note:**
-
-With a remote backend and locking, collaboration is no longer a problem. However, there is still one more problem remaining: isolation. When you first start using Terraform, you may be tempted to define all of your infrastructure in a single Terraform file or a single set of Terraform files in one folder. The problem with this approach is that all of your Terraform state is now stored in a single file, too, and a mistake anywhere could break everything.
-
-So the best solution for this should be state Isolation.
-
-There are two ways you could isolate state files:
-1. Isolation via workspaces: useful for quick, isolated tests on the same configuration.
-2. Isolation via file layout: useful for production use-cases where you need strong separation between environments.
-
----
-
-##  Creating an instance profile 
-We want to pass an IAM role our EC2s to give them access on some specic resources so will need to do the following: 
 1. Create Assume Role 
     
-    Returns a set of temporary security credentials that you can use to access AWS resources that you might not normally have access to. These temporary credentials consist of an access key ID, a secret access key, and a security token. Typically, you use AssumeRole within your account or for cross-account access.
-    
-    Add the following code to a new file named  `security.tf`
-    
+Assume Role uses Security Token Service (STS) API that returns a set of temporary security credentials that you can use to access AWS resources that you might not normally have access to. These temporary credentials consist of an access key ID, a secret access key, and a security token. Typically, you use AssumeRole within your account or for cross-account access.
+
+Add the following code to a new file named ***security.tf***   
     ```
-    resource "aws_iam_role" "test_role" {
-    name = "test_role"
-    assume_role_policy = <<EOF
-    {
+    resource "aws_iam_role" "ec2_instance_role" {
+    name = "ec2_instance_role"
+    assume_role_policy = jsonencode({
         "Version": "2012-10-17",
         "Statement": [
             {
@@ -422,17 +325,16 @@ We want to pass an IAM role our EC2s to give them access on some specic resource
             "Sid": ""
             }
         ]
-    }
-    EOF
+    })
     tags = {
         Name = "aws assume role"
         Environment = var.environment
         }
     }
     ```
-    In this code we are creating assume role with assume role policy. IT allows an entity [ec2 here] permission to assume the role. 
+ In the code above, we are creating AssumeRole with AssumeRole policy. It grants to an entity, in our case it is an EC2, permissions to assume the role. 
 
-2. Create Iam policy to this role 
+2. Create IAM policy to this role 
     This is where we need to define the required policy (i.e. permissions) according to the necessities. For example, allowing the IAM role to describe the ec2
     ```
     resource "aws_iam_policy" "policy" {
