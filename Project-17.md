@@ -258,7 +258,7 @@ resource "aws_route" "private_A" {
 
 resource "aws_route_table_association" "private_A" {
   count = var.preferred_number_of_private_subnets_A == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_A
-  subnet_id      = aws_subnet.private[count.index].id
+  subnet_id      = aws_subnet.private_A[count.index].id
   route_table_id = aws_route_table.private[count.index].id
 }
 ```  
@@ -283,7 +283,7 @@ resource "aws_route" "private_B" {
 
 resource "aws_route_table_association" "private_B" {
   count = var.preferred_number_of_private_subnets_B == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_B
-  subnet_id      = aws_subnet.private_2[count.index].id
+  subnet_id      = aws_subnet.private_B[count.index].id
   route_table_id = aws_route_table.private[count.index].id
 }
 ```
@@ -491,8 +491,6 @@ variable "ami" {
 ---
 ### Create ALB 
 
-Create a file called `alb.tf`
-
 First of all we need to create a security group for this ALB in `security_groups.tf`
 
 ```
@@ -520,7 +518,9 @@ resource "aws_security_group_rule" "outbound_all" {
 }
 ```
 
-We need to Create ALB to work as load balancer between EC2s 
+We need to Create ALB to work as load balancer between EC2s.
+
+Create a file named alb.tf and add the code below
 ```
 resource "aws_lb" "my-aws-alb" {
   name     = "my-test-alb"
@@ -540,7 +540,7 @@ resource "aws_lb" "my-aws-alb" {
 }
 ```
 
-To be able to let the ALB routes to  the EC2s we need to create <b>Target Group</b> to know its target 
+To inform our ALB to where route the traffic we need to create a **Target Group** to point to its targets.
 
 ```
 resource "aws_lb_target_group" "my-target-group" {
@@ -560,9 +560,9 @@ resource "aws_lb_target_group" "my-target-group" {
   vpc_id      = aws_vpc.main.id
 }
 ```
-Then we will need to Create Listner to this target Group
+Then we will need to Create a Listener to this target Group
 ```
-resource "aws_lb_listener" "my-test-alb-listner" {
+resource "aws_lb_listener" "my-test-alb-listener" {
   load_balancer_arn = aws_lb.my-aws-alb.arn
   port              = 80
   protocol          = "HTTP"
@@ -671,42 +671,6 @@ resource "aws_autoscaling_group" "public_asg" {
     propagate_at_launch = true
   }
 }
-
-resource "aws_autoscaling_group" "privateA_asg" {
-  launch_configuration = aws_launch_configuration.my-test-launch-config.name
-  vpc_zone_identifier  = [
-    aws_subnet.private_A[0].id,
-    aws_subnet.private_A[1].id
-  ]
-  target_group_arns    = [aws_lb_target_group.my-target-group.arn]
-  health_check_type    = "EC2"
-  min_size = 2
-  max_size = 10
-
-  tag {
-    key                 = "Name"
-    value               = "private_asg"
-    propagate_at_launch = true
-  }
-}
-
-resource "aws_autoscaling_group" "privateB_asg" {
-  launch_configuration = aws_launch_configuration.my-test-launch-config.name
-  vpc_zone_identifier  = [
-    aws_subnet.private_B[0].id,
-    aws_subnet.private_B[1].id
-  ]
-  target_group_arns    = [aws_lb_target_group.my-target-group.arn]
-  health_check_type    = "EC2"
-  min_size = 2
-  max_size = 10
-
-  tag {
-    key                 = "Name"
-    value               = "private_asg"
-    propagate_at_launch = true
-  }
-}
 ```
 
 
@@ -775,7 +739,7 @@ Then we will be able to create the 2 EC2s by adding the following code to `ec2.t
 
 ```
 resource "aws_instance" "private" {
-    count  = var.preferred_number_of_private_subnets_1 == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_1   
+    count  = var.preferred_number_of_private_subnets_A == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_private_subnets_A   
     key_name      = aws_key_pair.Dare.key_name
     ami           = var.ami
     instance_type = "t2.micro"
@@ -803,8 +767,8 @@ resource "aws_lb" "my-aws-alb-private" {
     aws_security_group.my-alb-sg.id,
   ]
   subnets = [
-    aws_subnet.private[0].id,
-    aws_subnet.private[1].id
+    aws_subnet.private_A[0].id,
+    aws_subnet.private_A[1].id
   ]
   tags = {
     Name = "my-test-alb-private"
@@ -818,7 +782,7 @@ We used here the same security froup that we used for the public subnet one and 
 We need to Create listner to this ALB and we will use same target group we used in public subnet, Add the following code to `alb.tf`
 
 ```
-resource "aws_lb_listener" "my-test-alb-listner-private" {
+resource "aws_lb_listener" "my-test-alb-listener-private" {
   load_balancer_arn = aws_lb.my-aws-alb-private.arn
   port              = 80
   protocol          = "HTTP"
@@ -836,8 +800,8 @@ As we did for the public one we will do the same for private one add the followi
 resource "aws_autoscaling_group" "private_asg" {
   launch_configuration = aws_launch_configuration.my-test-launch-config.name
   vpc_zone_identifier  = [
-    aws_subnet.private[0].id,
-    aws_subnet.private[1].id
+    aws_subnet.private_A[0].id,
+    aws_subnet.private_A[1].id
   ]
   target_group_arns    = [aws_lb_target_group.my-target-group.arn]
   health_check_type    = "EC2"
@@ -1696,7 +1660,7 @@ resource "aws_security_group_rule" "outbound_all-asg" {
 }
 ```
 
-2. we need to create the lunch configuration of this asg in `asg.tf` .  # Ask the students to refactor this code to use Launch templates.
+2. we need to create the lunch configuration of this asg in `asg.tf`
 
 ```
 resource "aws_launch_configuration" "my-test-launch-config" {
