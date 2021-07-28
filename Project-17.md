@@ -309,8 +309,8 @@ We want to pass an IAM role to our EC2s to give them access on some specic resou
     
 Assume Role uses Security Token Service (STS) API that returns a set of temporary security credentials that you can use to access AWS resources that you might not normally have access to. These temporary credentials consist of an access key ID, a secret access key, and a security token. Typically, you use AssumeRole within your account or for cross-account access.
 
-Add the following code to a new file named ***security.tf***   
-    ```
+Add the following code to a new file named ***security.tf*** 
+```
     resource "aws_iam_role" "ec2_instance_role" {
     name = "ec2_instance_role"
     assume_role_policy = jsonencode({
@@ -331,7 +331,7 @@ Add the following code to a new file named ***security.tf***
         Environment = var.environment
         }
     }
-    ```
+  ```
  In the code above, we are creating AssumeRole with AssumeRole policy. It grants to an entity, in our case it is an EC2, permissions to assume the role. 
 
 2. Create IAM policy to this role 
