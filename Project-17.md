@@ -777,9 +777,28 @@ resource "aws_lb" "my-aws-alb-private" {
   load_balancer_type = "application"
 }
 ```
-We used here the same security froup that we used for the public subnet one and for sure we can create new one 
 
-We need to Create listner to this ALB and we will use same target group we used in public subnet, Add the following code to `alb.tf`
+We need to create a target group
+```
+resource "aws_lb_target_group" "my-target-group_private" {
+  health_check {
+    interval            = 10
+    path                = "/"
+    protocol            = "HTTP"
+    timeout             = 5
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+  }
+
+  name        = "my-test-private"
+  port        = 80
+  protocol    = "HTTP"
+  target_type = "instance"
+  vpc_id      = aws_vpc.main.id
+}
+```
+
+We need to create listener to this ALB using the newly created target group
 
 ```
 resource "aws_lb_listener" "my-test-alb-listener-private" {
@@ -1013,33 +1032,12 @@ resource "aws_db_instance" "default" {
   username             = "admin"
   password             = "admin1234"
   parameter_group_name = "default.mysql5.7"
-  db_subnet_group_name = "db_instances"
+  db_subnet_group_name = "aws_db_subnet_group.db_instances"
   skip_final_snapshot  = true
   multi_az             = "true"
 }
 ```
 
-5.  Create an AMI from the Console 
-    1. Select the EC2 Instance to create an AMI 
-    2. Navigate to the AMi menu
-    3. Name the AMI 
-    4. Copy the AMI ID 
-11. Create launch template for bastion host - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template
-    1.  Introduce userdata 
-12. NLB and public facing ALB
-13. Target groups 
-14. Create bastion-asg.tf and nginx-tg.tf to configure the ASG respectively
-15. Repeat the process for private subnets (Internal ALB, autoscaling for webservers)
-16. Create EFS and RDS in the 3rd private subnet
-17. Ensure security groups are configured to allow respective connectivities.
-                --------Required updates to the diagram 
-                1. Introduce Tooling applications - More servers within the private subnet
-                1. Jenkins 
-                2. Sonarqube
-                3. Artifactory
-18. Add more resources (HA is not considered here)
-    1.  Jenkins Ec2
-    2.  Sonarqube
-    3.  Artifactory
+## Credits
 
-
+www.darey.io
