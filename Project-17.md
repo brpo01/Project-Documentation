@@ -626,7 +626,7 @@ resource "aws_security_group_rule" "outbound_all-asg" {
 **NOTE**: Before we create a new terraform file that will house our code for Autoscaling Group, we need to create a userdata file that we will reference in the terraform file to be created. We create an *sh* file and input our user-data script.
 
 
-Create an *userdata.sh* file and paste the script below
+Create a *userdata.sh* file and paste the script below
 ```
 <<EOF
 #! /bin/bash
@@ -636,7 +636,7 @@ systemctl start httpd
 systemctl enable httpd
 EOF
 ```
-2. we need to create the lunch configuration of this asg in `asg.tf` .  # Ask the students to refactor this code to use Launch templates.
+2. we need to create the lunch configuration of this asg in `asg.tf`
 
 ```
 resource "aws_launch_configuration" "my-test-launch-config" {
@@ -651,7 +651,7 @@ resource "aws_launch_configuration" "my-test-launch-config" {
   }
 }
 ```
-3. Now let us create the ASG for both public and private servers in `asg.tf`
+3. Now let us create the ASG for both public in `asg.tf`
 ```
 resource "aws_autoscaling_group" "public_asg" {
   launch_configuration = aws_launch_configuration.my-test-launch-config.name
@@ -680,7 +680,7 @@ resource "aws_autoscaling_group" "public_asg" {
 ---
 **Note:** 
 
-We are goinf to use some created resources we created while creating resources in public subnet as there resources are genreic and doesn't request specifec subnet 
+We are going to use some created resources we created while creating resources in public subnet as there resources are genreic and doesn't request specifec subnet 
 
 ---
 ### Create 2 EC2s
@@ -746,7 +746,7 @@ resource "aws_instance" "private" {
     vpc_security_group_ids = [
         aws_security_group.private_sg.id
     ]
-    subnet_id = element(aws_subnet.private.*.id,count.index)
+    subnet_id = element(aws_subnet.private_A.*.id,count.index)
     associate_public_ip_address = false
     source_dest_check = false
     tags = {
@@ -936,29 +936,40 @@ Then we need to create a mount volume. We will add two mount volumes 1 per avail
 ```
 resource "aws_efs_mount_target" "mounta" {
   file_system_id  = aws_efs_file_system.efs.id
-  subnet_id       = aws_subnet.private_2[0].id
+  subnet_id       = aws_subnet.private_B[0].id
   security_groups = [aws_security_group.SG.id]
 }
 
 resource "aws_efs_mount_target" "mountb" {
   file_system_id  = aws_efs_file_system.efs.id
-  subnet_id       = aws_subnet.private_2[1].id
+  subnet_id       = aws_subnet.private_B[1].id
   security_groups = [aws_security_group.SG.id]
 }
 
 ```
 ## Create RDS 
+First, let us declare the DB Subnet Group in our ***main.tf***
+```
+resource "aws_db_subnet_group" "db_instances" {
+  name       = "db_instances"
+  subnet_ids = [aws_subnet.private_B[0].id, aws_subnet.private_B[1].id]
+
+  tags = {
+    Name = "My DB subnet group"
+  }
+}
+```
 
 lets add RDS security Groups to `security_groups.tf`
 
 ```
 resource "aws_security_group" "myapp_mysql_rds" {
-  name        = "secuirty_group_web_mysqlserver"
+  name        = "security_group_web_mysqlserver"
   description = "Allow access to MySQL RDS"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "rds_secuirty_group"
+    Name = "rds_security_group"
   }
 
 }
@@ -984,7 +995,7 @@ resource "aws_security_group" "myapp_mysql_rds" {
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "rds_secuirty_group"
+    Name = "rds_security_group"
   }
 
 }
@@ -1002,7 +1013,7 @@ resource "aws_db_instance" "default" {
   username             = "admin"
   password             = "admin1234"
   parameter_group_name = "default.mysql5.7"
-  db_subnet_group_name = aws_db_subnet_group.db_subnet.name
+  db_subnet_group_name = "db_instances"
   skip_final_snapshot  = true
   multi_az             = "true"
 }
