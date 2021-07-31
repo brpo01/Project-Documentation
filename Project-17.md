@@ -1032,7 +1032,7 @@ resource "aws_db_instance" "default" {
   username             = "admin"
   password             = "admin1234"
   parameter_group_name = "default.mysql5.7"
-  db_subnet_group_name = "aws_db_subnet_group.db_instances"
+  db_subnet_group_name = "aws_subnet.private_B"
   skip_final_snapshot  = true
   multi_az             = "true"
 }
