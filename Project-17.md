@@ -1018,6 +1018,7 @@ After writing all the terraform code, run the below command to provision all the
 ```
 terraform apply -auto-approve
 ```
+![{3F162568-EE8D-41EE-9A46-267B2FD3684B} png](https://user-images.githubusercontent.com/76074379/127786132-b466ecec-79b2-47b0-977d-2bc9cbb3b952.jpg)
 
 
 ## Credits
