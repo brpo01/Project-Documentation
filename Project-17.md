@@ -385,10 +385,11 @@ As per our architecture we need to create the following resources inside the pub
 3. Auto Scaling Group    
 
 ### Upload SSH key-pair to aws keypairs 
-In order to be able to ssh to your machines you need to upload your ssh-key to aws keypair 
-to generate yours just run the following command: `ssh-keygen` and just follow the instructions and save your public and private key.
+Run the command: `ssh-keygen` and just follow the instructions and save your public and private key.
 
-To Upload your public key to aws keypair add the following code to `keypair.tf` file
+Create a file named *keypair.tf*
+
+To upload your public key to aws keypair add the following code to `keypair.tf` file
 ```
 resource "aws_key_pair" "<name of folder>" {
   key_name   = "<name of folder>"
@@ -447,7 +448,7 @@ Create `ec2.tf` file and add the EC2 configuration to the file as follows:
 ```
 resource "aws_instance" "bastion" {
     count  = var.preferred_number_of_public_subnets == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_public_subnets   
-    key_name      = aws_key_pair.Dare.key_name
+    key_name      = aws_key_pair.<name of folder>.key_name
     ami           = var.ami
     instance_type = "t2.micro"
     vpc_security_group_ids = [
@@ -468,16 +469,6 @@ resource "aws_instance" "bastion" {
 ```
 This creates 2 EC2s one in each subnet using the instance profile which we created before
  
----
-
-**NOTE:**
-
-
-In the above code inside `ec2.tf` you can find something called `user_data`. 
-
-In many cases we might want to pass commands to the machine once it has been created, `user_data` helps us to do that. We can pass to file path or inline bash script  
-
----
 
 **NOTE:** 
 
@@ -673,8 +664,6 @@ resource "aws_autoscaling_group" "public_asg" {
 }
 ```
 
-
-
 ## Repeat all of the creation of EC2, ALB, ASG for private subnet
 
 ---
@@ -846,8 +835,7 @@ Add the following code to `kms.tf`
 ```
 resource "aws_kms_key" "kms" {
   description = "KMS key "
-  policy = <<EOF
-  {
+  policy = jsonencode({
   "Version": "2012-10-17",
   "Id": "kms-key-policy",
   "Statement": [
@@ -859,8 +847,7 @@ resource "aws_kms_key" "kms" {
       "Resource": "*"
     }
   ]
-}
-EOF
+})
 }
 resource "aws_kms_alias" "alias" {
   name          = "alias/kms"
@@ -946,7 +933,7 @@ resource "aws_efs_file_system" "efs" {
     Name = "efs"
   }
   encrypted = true
-  kms_key_id = "${var.kms_arn}${aws_kms_key.kms.key_id}"
+  kms_key_id = "${var.kms_arn}"
 }
 ```
 
@@ -967,19 +954,8 @@ resource "aws_efs_mount_target" "mountb" {
 
 ```
 ## Create RDS 
-First, let us declare the DB Subnet Group in our ***main.tf***
-```
-resource "aws_db_subnet_group" "db_instances" {
-  name       = "db_instances"
-  subnet_ids = [aws_subnet.private_B[0].id, aws_subnet.private_B[1].id]
 
-  tags = {
-    Name = "My DB subnet group"
-  }
-}
-```
-
-lets add RDS security Groups to `security_groups.tf`
+Lets add RDS security Groups to `security_groups.tf`
 
 ```
 resource "aws_security_group" "myapp_mysql_rds" {
@@ -1005,21 +981,22 @@ resource "aws_security_group_rule" "security_rule" {
   ]
 }
 ```
-lets add RDS subnet groups to configure the high availabilty in out to AZ to `rds.tf` 
+Create a file named ***rds.tf***
 
+Let us declare the DB Subnet Group in our ***rds.tf***
 ```
-resource "aws_security_group" "myapp_mysql_rds" {
-  name        = "secuirty_group_web_mysqlserver"
-  description = "Allow access to MySQL RDS"
-  vpc_id      = aws_vpc.main.id
+resource "aws_db_subnet_group" "db_instances" {
+  name       = "db_instances"
+  subnet_ids = [aws_subnet.private_B[0].id, aws_subnet.private_B[1].id]
 
   tags = {
-    Name = "rds_security_group"
+    Name = "My DB subnet group"
   }
-
 }
 ```
-Lets Create the RDS, Add the following code to `rds.tf`
+
+
+Lets create the RDS, add the following code to `rds.tf`
 
 ```
 resource "aws_db_instance" "default" {
@@ -1032,11 +1009,16 @@ resource "aws_db_instance" "default" {
   username             = "admin"
   password             = "admin1234"
   parameter_group_name = "default.mysql5.7"
-  db_subnet_group_name = "aws_subnet.private_B"
+  db_subnet_group_name = "aws_db_subnet_group.db_instances.name"
   skip_final_snapshot  = true
   multi_az             = "true"
 }
 ```
+After writing all the terraform code, run the below command to provision all the resources codified
+```
+terraform apply -auto-approve
+```
+
 
 ## Credits
 
