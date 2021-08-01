@@ -358,14 +358,14 @@ Add the following code to a new file named ***security.tf***
        }
     }
     ```
-3. Attach thie Policy to this role 
+3. Attach this Policy to this role 
     
     This is where, we’ll be attaching the policy which we wrote above, to the role we created in the first step.
     ```    
     resource "aws_iam_role_policy_attachment" "test-attach" {
-        role       = aws_iam_role.test_role.name
-        policy_arn = aws_iam_policy.policy.arn
-    }
+    role = aws_iam_role.ec2_instance_role.name
+    policy_arn = aws_iam_policy.policy.arn
+}
     ```
 
 4. Create Instance Profile and interpolate the IAM role
