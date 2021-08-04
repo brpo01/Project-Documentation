@@ -1,4 +1,3 @@
-
 # Automate Infrastructure With IaC using Terraform
 
 ![tooling_project_15](https://user-images.githubusercontent.com/76074379/126079856-ac2b5dea-45d0-4f1f-85fa-54284a91a5de.png)
@@ -29,6 +28,98 @@
   ```
   aws s3 mb s3://<bucket-name>
   ```
+  
+  ## Introducing Backend on S3 
+Each Terraform configuration can specify a backend, which defines where and how operations are performed, where state snapshots are stored, etc.
+
+- If you are still learning how to use Terraform, we recommend using the default `local backend`, which requires no configuration.
+
+- If you and your team are using Terraform to manage meaningful infrastructure, you will need to create terraform backend to save your state file at the cloud 
+
+Add the following configs to a file called `backend.tf`
+1. We need to provision S3 to save our statefile there 
+```
+resource "aws_s3_bucket" "terraform_state" {
+  bucket = "name-of-bucket"
+  # Enable versioning so we can see the full revision history of our state files
+  versioning {
+    enabled = true
+  }
+  # Enable server-side encryption by default
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+}
+```
+2. We need to provision Dynamo DB to check state locking and consistency checking
+```
+resource "aws_dynamodb_table" "terraform_locks" {
+  name         = "name-of-dynamodb_table"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "LockID"
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+}
+```
+3. Do `terraform apply` to provision resources 
+4. Create the Backend block
+```
+terraform {
+  backend "s3" {
+    bucket         = "name-of-bucket"
+    key            = "global/s3/terraform.tfstate"
+    region         = "us-west-1"
+    dynamodb_table = "name-of-dynamodb_table"
+    encrypt        = true
+  }
+}
+```
+5. Do a `terraform init` to initialize the new backend 
+
+    This will initialize our new backend after confirming by typing `yes` 
+
+6. Test it now 
+
+    Before doing anything if you opened aws now to see what heppened you shoud be able to see the following:
+    - tfstatefile is now inside the S3 bucket 
+    - dynamodb table which we create has an entry includes state file status 
+    - run now `terraform plan` and quickly go and watch what happened to dynamodb table 
+      and how it is locked 
+    - wait until `terraform plan` is finished and refresh dynamo db table, you be able to see that is back to their state 
+
+
+### conclusion
+
+Terraform will automatically pull the latest state from this S3 bucket before running a command, and automatically push the latest state to the S3 bucket after running a command. To see this in action, add the following output variables:
+```
+output "s3_bucket_arn" {
+  value       = aws_s3_bucket.terraform_state.arn
+  description = "The ARN of the S3 bucket"
+}
+output "dynamodb_table_name" {
+  value       = aws_dynamodb_table.terraform_locks.name
+  description = "The name of the DynamoDB table"
+}
+```
+and then do `terraform apply`
+
+Now, head over to the S3 console again, refresh the page, and click the gray “Show” button next to “Versions.” You should now see several versions of your terraform.tfstate file in the S3 bucket:
+
+With a remote backend and locking, collaboration is no longer a problem. However, there is still one more problem remaining: isolation. When you first start using Terraform, you may be tempted to define all of your infrastructure in a single Terraform file or a single set of Terraform files in one folder. The problem with this approach is that all of your Terraform state is now stored in a single file, too, and a mistake anywhere could break everything.
+
+So the best solution for this should be state Isolation.
+
+There are two ways you could isolate state files:
+1. Isolation via workspaces: useful for quick, isolated tests on the same configuration.
+2. Isolation via file layout: useful for production use-cases where you need strong separation between environments.
+---
+
   ![{820CE5EC-E630-471E-B68D-794522E29B6D} png](https://user-images.githubusercontent.com/76074379/126080150-189345d7-8d75-45b4-95e4-6b584a1f093f.jpg)
 
 ## The VPC | Subnets | Security Groups
@@ -488,6 +579,8 @@ Run ***terraform plan*** and ***terraform apply -auto-approve*** and ensure ever
 
 ![{60B91E88-B7FA-4933-BF89-89F584DF9B2D} png](https://user-images.githubusercontent.com/76074379/126080909-9e3d6395-f4e1-41e1-8117-d3c49a36b29f.jpg)
 
+**Note**: Create a `.gitignore` file and add files such as `variables.tf`, `terraform.tfvars`, `.terraform.tfstate` etc., that contain sensitive information so  that it will not be tracked and exposed to the public on your version control software. e.g Github
+
 ## Credits
 
 https://darey.io/docs/project-16-introduction/
@@ -495,3 +588,6 @@ https://darey.io/docs/project-16-introduction/
 https://docs.chocolatey.org/en-us/choco/setup
 
 https://github.com/aws/aws-cli/issues/3567
+
+
+
