@@ -6,6 +6,99 @@
 ![tooling_project_15](https://user-images.githubusercontent.com/76074379/127383520-f081e1da-44d3-464d-bf4b-8b0e28273147.png)
 
 
+ ## Introducing Backend on S3 
+Each Terraform configuration can specify a backend, which defines where and how operations are performed, where state snapshots are stored, etc.
+
+- If you are still learning how to use Terraform, we recommend using the default `local backend`(the statefiles will be stored on your local machine), which requires no configuration
+
+- If you and your team are using Terraform to manage meaningful infrastructure, you will need to create terraform backend to save your state file at the cloud for easy access.
+
+Add the following configs to a file called `backend.tf`
+1. We need to provision S3 to save our statefile there 
+```
+resource "aws_s3_bucket" "terraform_state" {
+  bucket = "name-of-bucket"
+  # Enable versioning so we can see the full revision history of our state files
+  versioning {
+    enabled = true
+  }
+  # Enable server-side encryption by default
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+}
+```
+2. We need to provision Dynamo DB to check state locking and consistency checking
+```
+resource "aws_dynamodb_table" "terraform_locks" {
+  name         = "name-of-dynamodb_table"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "LockID"
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+}
+```
+3. Run `terraform apply -target aws_s3_bucket.<name> -target aws_dynamodb_table.<name>` to provision the above resources
+ 
+4. Create the Backend block by pasting the below code snippet to `backend.tf`
+```
+terraform {
+  backend "s3" {
+    bucket         = "name-of-bucket"
+    key            = "global/s3/terraform.tfstate"
+    region         = "us-west-1"
+    dynamodb_table = "name-of-dynamodb_table"
+    encrypt        = true
+  }
+}
+```
+5. Run a `terraform init` to initialize the new backend 
+
+    This will initialize our new backend after confirming by typing `yes` 
+
+6. Test it now 
+
+    Before doing anything if you opened aws now to see what heppened you shoud be able to see the following:
+    - tfstatefile is now inside the S3 bucket 
+    - dynamodb table which we create has an entry includes state file status 
+    - run now `terraform plan` and quickly go and watch what happened to dynamodb table 
+      and how it is locked 
+    - wait until `terraform plan` is finished and refresh dynamo db table, you be able to see that is back to their state 
+
+
+### conclusion
+
+Terraform will automatically pull the latest state from this S3 bucket before running a command, and automatically push the latest state to the S3 bucket after running a command. To see this in action, add the following output variables:
+```
+output "s3_bucket_arn" {
+  value       = aws_s3_bucket.terraform_state.arn
+  description = "The ARN of the S3 bucket"
+}
+output "dynamodb_table_name" {
+  value       = aws_dynamodb_table.terraform_locks.name
+  description = "The name of the DynamoDB table"
+}
+```
+and then run `terraform apply`
+
+Now, head over to the S3 console again, refresh the page, and click the gray “Show” button next to “Versions.” You should now see several versions of your terraform.tfstate file in the S3 bucket:
+
+With a remote backend and locking, collaboration is no longer a problem. However, there is still one more problem remaining: isolation. When you first start using Terraform, you may be tempted to define all of your infrastructure in a single Terraform file or a single set of Terraform files in one folder. The problem with this approach is that all of your Terraform state is now stored in a single file, too, and a mistake anywhere could break everything.
+
+So the best solution for this should be state Isolation.
+
+There are two ways you could isolate state files:
+1. Isolation via workspaces: useful for quick, isolated tests on the same configuration.
+2. Isolation via file layout: useful for production use-cases where you need strong separation between environments.
+---
+
+
 
 ## Create Private Subnets
 
@@ -620,7 +713,7 @@ resource "aws_security_group_rule" "outbound_all-asg" {
 Create a *userdata.sh* file and paste the script below
 ```
 <<EOF
-#! /bin/bash
+#!/bin/bash
 yum -y install httpd
 echo "Hello, from Terraform" > /var/www/html/index.html
 systemctl start httpd
@@ -995,6 +1088,36 @@ resource "aws_db_subnet_group" "db_instances" {
 }
 ```
 
+It is very risky to expose our secrets(such as username, passwords,etc).To secure our DB username and password, we will use AWS Secrets Manager to store our secrets and reference them in our code.
+
+- First, login to the AWS Secrets Manager UI, click “store a new secret,”
+- Click on `other types of secrets` , click on `Plaintext` and enter the secrets you wish to store in json format:
+  ```
+  {
+  "username": "type the DB username here",
+  "password": "type the DB password here"
+  }
+  ```
+- Next, give the secret a unique name
+- Click “next” and “store” to save the secret
+
+Now, in your Terraform code, you can use the ***aws_secretsmanager_secret_version*** data source to read this secret in our ***rds.tf*** file
+
+```
+data "aws_secretsmanager_secret_version" "credentials" {
+  # Fill in the name you gave to your secret
+  secret_id = "db-secret"
+}
+```
+Since we stored the secret data as JSON, we can use `jsondecode` to parse it
+```
+locals {
+  db_secret = jsondecode(
+    data.aws_secretsmanager_secret_version.credentials.secret_string
+  )
+}
+```
+
 
 Lets create the RDS, add the following code to `rds.tf`
 
@@ -1006,8 +1129,8 @@ resource "aws_db_instance" "default" {
   engine_version       = "5.7"
   instance_class       = "db.t2.micro"
   name                 = "mydb"
-  username             = "admin"
-  password             = "admin1234"
+  username             = local.db_secret.username
+  password             = local.db_secret.password
   parameter_group_name = "default.mysql5.7"
   db_subnet_group_name = "aws_db_subnet_group.db_instances.name"
   skip_final_snapshot  = true
